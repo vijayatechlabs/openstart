@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+.pnp.*
+__pycache__/
+.venv/
+venv/
+
+# Build output
+dist/
+build/
+.next/
+.astro/
+.output/
+.turbo/
+
+# Secrets & environment
+.env
+.env.*
+!.env.example
+
+# Project data (provenance is tracked in .ai/docs/DATA-LOG.md; raw files are not)
+.ai/docs/data/*
+!.ai/docs/data/README.md
+
+# OS / editor noise
+.DS_Store
+*.log
+.vscode/
+.idea/
+
+# Claude Code per-machine settings (keep settings.json shared, ignore the local one)
+.claude/settings.local.json
