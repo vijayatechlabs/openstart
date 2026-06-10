@@ -127,6 +127,8 @@ if [ $DRY -eq 1 ]; then
 else
   say "✓ Applied. Framework $old → $new"
   say "  Untouched: .ai/docs/ existing files · .ai/examples/ · .claude/settings*.json · your code"
+  say "  Tip: found a gap in the framework? Run /feedback (Claude Code) or"
+  say "       bash .ai/framework/feedback.sh \"…\" to log it and get a ready-to-file issue."
   if [ "${CONFLICTS:-0}" = "1" ]; then
     say ""
     say "⚠  RECONCILE: a stub with custom content was kept. Its OpenStart version is"

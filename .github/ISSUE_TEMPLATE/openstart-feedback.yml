@@ -1,0 +1,41 @@
+name: OpenStart feedback
+description: Report a gap, bug, or idea from a project using the OpenStart framework (projects don't edit .ai/framework/ — they file this).
+title: "[feedback]: "
+labels: ["feedback"]
+body:
+  - type: input
+    id: project
+    attributes:
+      label: Project
+      description: Which project surfaced this (e.g. my-app, acme-site)?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Framework version
+      description: Output of the version line from `feedback.sh` (e.g. v1.1.0 (abc1234)).
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      options: [bug, enhancement, aeo, dx, docs]
+    validations:
+      required: true
+  - type: input
+    id: area
+    attributes:
+      label: Area
+      description: e.g. onboard, sync, aeo, agent-guide, doc-rules, general
+  - type: textarea
+    id: what
+    attributes:
+      label: What's missing or broken
+      description: Be concrete. Include repro steps for bugs.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change (optional)
+      description: How you'd like the framework to behave. The maintainer refines this.

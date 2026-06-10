@@ -19,6 +19,7 @@ match the row, don't create a new file.
 | Data sources, exports, provenance, sensitivity | `.ai/docs/DATA-LOG.md` |
 | Actual data files / datasets / exports | `.ai/docs/data/` |
 | AEO / SEO work performed | `.ai/docs/AEO-CHANGES.md` |
+| Framework feedback (local log of gaps to file upstream) | `.ai/docs/FRAMEWORK-FEEDBACK.md` |
 
 ## Rules
 
@@ -27,7 +28,10 @@ match the row, don't create a new file.
    Claude Code's settings, skills, and commands.
 3. **`.ai/framework/` is read-only reference**, not a place to log project state. It
    holds the reusable standard (this template). Update it only to improve the
-   framework itself, not to record a specific project's progress.
+   framework itself, not to record a specific project's progress. If the framework
+   itself is missing or broken, don't edit it here — run the feedback flow
+   (`bash .ai/framework/feedback.sh "…"`) and file it upstream. See
+   `.ai/framework/FEEDBACK.md`.
 4. **Update docs at the end of every session.** Minimum: `CHANGELOG.md`,
    `CURRENT-STATUS.md`, `TASKS.md`.
 5. **Decisions are append-only.** Don't rewrite history in `DECISIONS.md`; add a

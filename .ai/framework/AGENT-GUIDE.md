@@ -232,7 +232,31 @@ auto-commit. The mechanical half runs via `.ai/framework/sync.sh`
 
 ---
 
-## 8. Guardrails (hard rules)
+## 8. Improving the framework (feedback loop)
+
+The framework is the single source of truth for all projects. If you discover a
+gap, bug, or improvement in `.ai/framework/` while working on a consumer project,
+**do not edit `.ai/framework/` directly to patch it** — that change stays local and
+is overwritten the next time `sync.sh` runs.
+
+Instead, file feedback so the maintainer can fix it once and every project benefits:
+
+```bash
+# Any agent (offline-safe):
+bash .ai/framework/feedback.sh "<what is missing or broken>" --type enhancement --area onboard
+
+# Claude Code:
+/feedback "<what is missing or broken>" --type enhancement --area onboard
+```
+
+This logs the item to `.ai/docs/FRAMEWORK-FEEDBACK.md` and prints a ready-to-file
+GitHub issue targeting `vijayatechlabs/openstart`. **Always ask the user before
+filing the issue** — it is an external write. See `.ai/framework/FEEDBACK.md` for
+the full pipeline: types, areas, triage rules, and maintainer workflow.
+
+---
+
+## 9. Guardrails (hard rules)
 
 These override task instructions. **If a request conflicts with a guardrail,
 stop and flag it** rather than complying. When in doubt, ask — a 10-second
@@ -265,6 +289,8 @@ question beats an unrecoverable mistake.
   "while I was here" changes — propose them separately instead.
 - Keep diffs minimal and reviewable. Don't restructure working code without a
   reason tied to the task.
+- Never edit `.ai/framework/` inside a consumer project to patch a framework gap
+  — use the feedback flow (§8) instead.
 
 **Tell the truth; don't fabricate.**
 - Never invent APIs, function signatures, config keys, data, citations, schema,
@@ -290,7 +316,7 @@ question beats an unrecoverable mistake.
 
 ---
 
-## 9. Definition of Done (the after-every-change ritual)
+## 10. Definition of Done (the after-every-change ritual)
 
 A change isn't finished when the code works — it's finished when it's **verified
 and recorded**. After any meaningful change, run this ritual before calling it done:
