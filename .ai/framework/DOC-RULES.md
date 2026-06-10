@@ -20,6 +20,7 @@ match the row, don't create a new file.
 | Actual data files / datasets / exports | `.ai/docs/data/` |
 | AEO / SEO work performed | `.ai/docs/AEO-CHANGES.md` |
 | Framework feedback (local log of gaps to file upstream) | `.ai/docs/FRAMEWORK-FEEDBACK.md` |
+| Blog/PR content briefs from shipped user-facing features | `.ai/docs/CONTENT-PIPELINE.md` |
 
 ## Rules
 

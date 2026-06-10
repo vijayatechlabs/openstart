@@ -324,17 +324,25 @@ and recorded**. After any meaningful change, run this ritual before calling it d
 1. **Verify.** Run the project's build, tests, linter, and type-checker — the exact
    commands are in `.ai/docs/STACK.md`. Don't claim it works if you haven't run it.
 2. **Security-scan the diff.** Check for injection, leaked secrets, broken authz,
-   unsafe input handling (per §3.1 and the §8 guardrails). In Claude Code, use
+   unsafe input handling (per §3.1 and the §9 guardrails). In Claude Code, use
    `/security-review`.
 3. **Self-review the diff.** Small and focused; no dead code, debug output, or
    stray files; matches repo conventions. In Claude Code, use `/code-review`.
 4. **Update the docs.** At minimum `CHANGELOG.md`, `CURRENT-STATUS.md`, and
    `TASKS.md` (§4). Record any lasting decision in `DECISIONS.md`.
+5. **Hand off to content (only if user-facing).** If the change is something a
+   user would care about — a new feature, a notable improvement, a launch —
+   capture the marketing angle while it's fresh: run `/content "<what shipped>"`
+   (or `bash .ai/framework/content.sh`) to queue a brief in
+   `.ai/docs/CONTENT-PIPELINE.md` and hand it to the marketing repo. Skip for
+   internal-only changes (refactors, infra, most bug fixes) — those stay in
+   `CHANGELOG.md`. See `.ai/framework/CONTENT-HANDOFF.md`.
 
 This routine is **identical across every project**; only the *commands* differ,
 and those live in `.ai/docs/STACK.md` — so the standard stays portable while the
 mechanics stay stack-specific. **Scale it to the change:** a typo fix needs only
-step 4; a new endpoint or migration needs all four.
+step 4; a new endpoint or migration needs steps 1–4; a user-facing feature also
+triggers step 5.
 
 If `.ai/docs/STACK.md` is still an unfilled placeholder, populate it the first time
 you learn how this project builds and tests — then every future change can follow

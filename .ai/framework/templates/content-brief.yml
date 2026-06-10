@@ -1,0 +1,37 @@
+# Copy this into a marketing repo as .github/ISSUE_TEMPLATE/content-brief.yml
+# so content briefs filed by `content.sh` arrive structured. See
+# .ai/framework/CONTENT-HANDOFF.md.
+name: Content brief
+description: A shipped, user-facing feature to turn into a blog post / release note / announcement.
+title: "[content]: "
+labels: ["content"]
+body:
+  - type: input
+    id: feature
+    attributes:
+      label: Feature
+      description: What shipped (one line).
+    validations:
+      required: true
+  - type: input
+    id: audience
+    attributes:
+      label: Audience
+      description: Who the post is for (e.g. fleet managers, first-time buyers).
+  - type: textarea
+    id: angle
+    attributes:
+      label: Angle / hook
+      description: Why it matters to that audience — the story, not the changelog line.
+    validations:
+      required: true
+  - type: input
+    id: keyword
+    attributes:
+      label: Target keyword
+      description: Primary search term for AEO/SEO.
+  - type: input
+    id: source
+    attributes:
+      label: Source project
+      description: Which product repo shipped this.
