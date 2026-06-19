@@ -13,7 +13,19 @@ Dated record of features, changes, and fixes. Newest first.
   filtered listing pages — `#2`
 - ONBOARD: brownfield `.project/` → `.ai/docs/` migration-map appendix and the
   dual-changelog standing rule (CHANGELOG vs AEO-CHANGES) — `#3`
-- All five items reported via `/feedback` from the vishwakarm consumer project.
+- AEO §9.3.1 + `.ai/examples/nextjs-analytics.ts`: GA4 `ai_referral_landing`
+  pattern (AI-source regex, `trackAiReferral`, admin + DebugView checklist) — `#6`
+- AEO §8.1.1 + `.ai/examples/nextjs-robots.ts`: opt-in AI crawler allow-list
+  (`robots.ts` allow-public/deny-private + Google-Extended decision guide) — `#7`
+- AEO §7.5: standalone trust/about/faq page pattern + route→schema table, with
+  `faqPage`/`aboutPage`/`webPage` builders added to `nextjs-seo.ts` — `#8`
+### Changed
+- Feedback pipeline: local `FRAMEWORK-FEEDBACK.md` log is now optional; added a
+  `.ai/FEEDBACK_UPSTREAM_ONLY` marker that makes `feedback.sh` skip the local
+  append and `sync.sh` skip seeding the log (FEEDBACK.md, AGENT-GUIDE §8,
+  DOC-RULES.md) — `#9`
+### Notes
+- All nine items reported via `/feedback` from the vishwakarm consumer project.
 
 ## [Unreleased]
 ### Added
