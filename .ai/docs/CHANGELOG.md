@@ -24,6 +24,11 @@ Dated record of features, changes, and fixes. Newest first.
   `.ai/FEEDBACK_UPSTREAM_ONLY` marker that makes `feedback.sh` skip the local
   append and `sync.sh` skip seeding the log (FEEDBACK.md, AGENT-GUIDE §8,
   DOC-RULES.md) — `#9`
+### Changed (polish)
+- §7.1 / checklists / prompts: path-segment filter alignment; §8.4.1 prefix-twin
+  `generateMetadata` example + sitemap priority hint; §8.4.2 required catch-all note;
+  Prompt D synced with implementation rules; `nextjs-seo.ts` `getSiteUrl`, page-scoped
+  `localBusiness` `@id`, `website` publisher link; ONBOARD optional community changelog.
 ### Notes
 - All nine items reported via `/feedback` from the vishwakarm consumer project.
 

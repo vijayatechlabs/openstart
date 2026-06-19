@@ -39,11 +39,12 @@ see the target before running `/onboard`. Fictional project — illustration onl
 
 ## `nextjs-seo.ts` (reference code)
 
-Copy-paste-ready JSON-LD builders for Next.js App Router — `serializeJsonLd`
-plus `organization`, `website`, `breadcrumbList`, `localBusiness`, and the
-standalone-page builders `faqPage` / `aboutPage` / `webPage` (§7.5). Drop into
-`lib/seo.ts`, wire to real data, and keep schema truthful and aligned with
-visible content (see `framework/aeo/AEO-FRAMEWORK.md` §8.3).
+Copy-paste-ready JSON-LD builders for Next.js App Router — `getSiteUrl`,
+`serializeJsonLd`, plus `organization`, `website`, `breadcrumbList`,
+`localBusiness` (page-scoped `@id` via `path`), and the standalone-page builders
+`faqPage` / `aboutPage` / `webPage` (§7.5). Drop into `lib/seo.ts`, set
+`metadataBase` in root layout, wire to real data, and keep schema truthful and
+aligned with visible content (see `framework/aeo/AEO-FRAMEWORK.md` §8.3).
 
 ## `nextjs-analytics.ts` (reference code)
 

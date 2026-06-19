@@ -6,7 +6,7 @@
 - [ ] sitemap.xml exists and is correct.
 - [ ] canonical logic is correct.
 - [ ] visible main content is accessible as text.
-- [ ] on filtered/query-param pages, the visible H1 and answer-first intro match the per-param metadata (not a generic title).
+- [ ] on filtered listing pages (query-param or path-segment), the visible H1 and answer-first intro match the per-filter metadata (not a generic title).
 - [ ] page experience issues on key pages were reviewed.
 - [ ] structured data matches visible content.
 - [ ] preview-control policy was reviewed intentionally.

@@ -226,13 +226,14 @@ Each priority page should begin with 1-2 paragraphs that clearly explain:
 - what problem it solves,
 - where relevant, location / market / pricing signal.
 
-**Filtered / query-param listing pages.** When `<title>`/metadata is generated
-per query param (e.g. `generateMetadata` reading `?city=` or `?brand=`), the
-**visible H1 and answer-first intro must reflect the same filter** — not a generic
-page title. A page whose metadata says "Cars in Pune" while the visible H1 says
-"All Cars" is misaligned: it weakens snippet eligibility and trust, and the
-structured data no longer matches visible content. Drive the H1, intro, and
-metadata from one source of truth for the active filter.
+**Filtered listing pages (query-param or path-segment).** When `<title>`/metadata is
+generated per filter — whether from query params (e.g. `generateMetadata` reading
+`?city=` or `?brand=`) or from path segments (e.g. `/directory/cars/pune/koregaon-park`)
+— the **visible H1 and answer-first intro must reflect the same filter**, not a
+generic page title. A page whose metadata says "Cars in Pune" while the visible H1
+says "All Cars" is misaligned: it weakens snippet eligibility and trust, and the
+structured data no longer matches visible content. Drive the H1, intro, and metadata
+from one source of truth for the active filter.
 
 ### 7.2 Non-commodity content standard
 The agent must push the user for content that contains:
@@ -350,7 +351,11 @@ is not enough:
    ```html
    <link rel="alternate" type="text/markdown" href="https://example.com/provider/acme/md">
    ```
-   In Next.js App Router, emit this from `generateMetadata`:
+   In Next.js App Router, emit this from `generateMetadata`. The alternate `href`
+   must match the **actual twin route shape** (suffix for single dynamic segments;
+   prefix for catch-all directory twins — see §8.4.2):
+
+   *Single dynamic segment* (suffix twin):
    ```ts
    export async function generateMetadata({ params }): Promise<Metadata> {
      const pageUrl = `https://example.com/provider/${params.slug}`;
@@ -362,14 +367,29 @@ is not enough:
      };
    }
    ```
+
+   *Catch-all directory* (prefix twin — `/md/directory/...`, not `/directory/.../md`):
+   ```ts
+   export async function generateMetadata({ params }): Promise<Metadata> {
+     const segments = (params.segments as string[]).join('/');
+     const pageUrl = `https://example.com/directory/${segments}`;
+     return {
+       alternates: {
+         canonical: pageUrl,
+         types: { 'text/markdown': `https://example.com/md/directory/${segments}` },
+       },
+     };
+   }
+   ```
 2. **sitemap.xml** — include twin URLs at a **lower priority** than their HTML
-   counterparts so they are discoverable without competing with the canonical page.
+   counterparts so they are discoverable without competing with the canonical page
+   (e.g. HTML `priority: 1.0`, twin `priority: 0.5`; omit `changefreq` on twins if unsure).
 3. **llms.txt** — cross-reference the twins so AI-first crawlers find them directly.
 
 #### 8.4.2 Next.js App Router routing constraint for twins
-Next.js rejects a catch-all that is **not the last URL segment**, so a twin route
-like `app/[[...segments]]/md/route.ts` will not build — the `/md` suffix cannot
-follow a catch-all.
+Next.js rejects a catch-all that is **not the last URL segment**, so twin routes
+like `app/[[...segments]]/md/route.ts` or `app/[...segments]/md/route.ts` will not
+build — the `/md` suffix cannot follow an optional or required catch-all.
 
 - **Single dynamic segment** → suffix works: `app/provider/[slug]/md/route.ts`
   serves `/provider/acme/md`. ✅
@@ -499,6 +519,10 @@ Rules:
 - keep changes minimal and framework-native
 - show diffs/snippets for major files before finalizing
 - do not force Dualmark unless justified
+- keep schema truthful
+- on filtered listing pages, drive H1, answer-first intro, and metadata from one source of truth (§7.1)
+- if you add markdown twins, wire all three discovery surfaces (HTML alternate link, sitemap.xml at lower priority, llms.txt) per §8.4.1; alternate href must match the actual twin route shape
+- on Next.js App Router, never suffix /md after a catch-all — use /md/directory/[[...segments]] for directory twins (§8.4.2)
 - document every important change in .ai/docs/AEO-CHANGES.md
 After implementation, give me a verification checklist.
 ```
@@ -535,7 +559,7 @@ Before calling a project complete, the agent must confirm:
 - [ ] sitemap.xml exists and is correct.
 - [ ] canonical logic is correct.
 - [ ] visible main content is accessible as text.
-- [ ] on filtered/query-param pages, the visible H1 and answer-first intro match the per-param metadata, not a generic title (see §7.1).
+- [ ] on filtered listing pages (query-param or path-segment), the visible H1 and answer-first intro match the per-filter metadata, not a generic title (see §7.1).
 - [ ] page experience issues on key pages were reviewed.
 - [ ] structured data matches visible content.
 - [ ] preview-control policy was reviewed intentionally.

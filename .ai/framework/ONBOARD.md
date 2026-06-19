@@ -138,13 +138,19 @@ After folding content, delete the legacy files in the same change so there is a
 single source of truth, and record what moved where in the Phase 4 summary.
 
 ### Dual-changelog standing rule
-OpenStart keeps **two separate logs on purpose** — record this as a standing rule
-under `PROJECT-CONTEXT.md` → *Important notes* so it survives future onboarding:
+OpenStart keeps **separate logs on purpose** — record this as a standing rule under
+`PROJECT-CONTEXT.md` → *Important notes* so it survives future onboarding:
 
-- **`.ai/docs/CHANGELOG.md`** — product/feature/fix history (what shipped).
+- **`.ai/docs/CHANGELOG.md`** — product/feature/fix history for the team (what shipped).
 - **`.ai/docs/AEO-CHANGES.md`** — SEO / Google-AI / broader-AEO work only, per
   `framework/aeo/AEO-FRAMEWORK.md` §10.
+- **Optional: community/public changelog** — when the product has a user-facing
+  audience, a third surface (e.g. `lib/changelog.ts` or `apps/web/lib/changelog.ts`
+  rendered at `/changelog`) holds plain-language release notes for members. This is
+  **not** a substitute for `CHANGELOG.md` or `AEO-CHANGES.md`; it is the public-facing
+  digest. Record the path in `PROJECT-CONTEXT.md`.
 
 Do **not** merge a legacy single changelog into one file: route product entries to
-`CHANGELOG.md` and SEO/AEO entries to `AEO-CHANGES.md`. Keeping them split keeps the
-AEO audit trail (§10 deliverable) clean and independently reviewable.
+`CHANGELOG.md`, SEO/AEO entries to `AEO-CHANGES.md`, and community-facing notes to
+the public changelog module when one exists. Keeping them split keeps the AEO audit
+trail (§10 deliverable) clean and independently reviewable.

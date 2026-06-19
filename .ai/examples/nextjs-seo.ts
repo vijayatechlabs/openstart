@@ -15,7 +15,10 @@
  *   />
  */
 
-const SITE_URL = 'https://example.com'; // single source of truth for absolute URLs
+/** Set `metadataBase` in root `layout.tsx`; use env for absolute schema URLs. */
+export function getSiteUrl(): string {
+  return process.env.NEXT_PUBLIC_SITE_URL ?? 'https://example.com';
+}
 
 /**
  * Serialize a JSON-LD object for a <script type="application/ld+json"> tag.
@@ -28,7 +31,7 @@ export function serializeJsonLd(data: unknown): string {
 
 /** Absolute URL helper — schema `@id`/`url` values should be absolute. */
 function abs(path = '/'): string {
-  return new URL(path, SITE_URL).toString();
+  return new URL(path, getSiteUrl()).toString();
 }
 
 type Organization = {
@@ -66,6 +69,7 @@ export function website(site: WebSite) {
     '@id': `${abs('/')}#website`,
     name: site.name,
     url: site.url ?? abs('/'),
+    publisher: { '@id': `${abs('/')}#organization` },
     ...(site.searchUrlTemplate && {
       potentialAction: {
         '@type': 'SearchAction',
@@ -99,6 +103,8 @@ type LocalBusiness = {
   name: string;
   /** Schema.org subtype, e.g. 'Restaurant', 'Store'. Defaults to LocalBusiness. */
   type?: string;
+  /** Page path for per-entity JSON-LD (e.g. '/provider/acme'). Required on entity pages. */
+  path: string;
   url?: string;
   telephone?: string;
   image?: string;
@@ -118,9 +124,9 @@ export function localBusiness(biz: LocalBusiness) {
   return {
     '@context': 'https://schema.org',
     '@type': biz.type ?? 'LocalBusiness',
-    '@id': `${abs('/')}#localbusiness`,
+    '@id': `${abs(biz.path)}#localbusiness`,
     name: biz.name,
-    url: biz.url ?? abs('/'),
+    url: biz.url ?? abs(biz.path),
     ...(biz.telephone && { telephone: biz.telephone }),
     ...(biz.image && { image: abs(biz.image) }),
     address: { '@type': 'PostalAddress', ...biz.address },
