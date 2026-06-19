@@ -257,6 +257,34 @@ Important facts must exist as text in the DOM and not only inside:
 - client-only widgets,
 - inaccessible visual components.
 
+### 7.5 Standalone trust / about / faq pages
+Answer engines cite **dedicated, indexable pages** more reliably than homepage
+sections behind `/#anchors`. For queries like "how does X verify providers", "is X
+affiliated with the government", or "is X legit", a fragment URL is a weak citation
+target; a standalone page is a strong one.
+
+When the homepage carries meaningful trust/about/FAQ content, the agent should
+propose splitting it into dedicated routes backed by a **shared content module**
+(single source of truth, rendered in both places):
+
+- `marketing-content.ts` — FAQs, verification pillars, company facts.
+- The homepage shows an **excerpt** and links to the full page (real route, not
+  `/#faq`); footers link to the dedicated pages.
+
+Minimal layout and schema mapping:
+
+| Route | Content | JSON-LD `@type` |
+|---|---|---|
+| `/faq` | full FAQ list | `FAQPage` |
+| `/about` | company story, mission, team | `AboutPage` |
+| `/trust` | verification, safety, policies | `WebPage` |
+| `/` (home) | FAQ **excerpt** + links | `WebSite` / `Organization` (existing) |
+
+Rules: only mark up Q&A/claims that are **visible** on the page; link the dedicated
+pages from real navigation/footer (not anchors); keep one content source feeding
+both excerpt and full page. See `.ai/examples/nextjs-seo.ts` for `faqPage`,
+`aboutPage`, and `webPage` builders.
+
 ---
 
 ## 8. Technical standards the agent must enforce

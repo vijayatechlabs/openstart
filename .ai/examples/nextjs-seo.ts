@@ -130,3 +130,54 @@ export function localBusiness(biz: LocalBusiness) {
     ...(biz.openingHours?.length && { openingHours: biz.openingHours }),
   };
 }
+
+type Faq = { question: string; answer: string };
+
+/**
+ * FAQPage — use on a dedicated `/faq` page (§7.5). Only include Q&A that is
+ * also visible on the page; never emit hidden or invented FAQs.
+ */
+export function faqPage(faqs: Faq[], path = '/faq') {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${abs(path)}#faqpage`,
+    url: abs(path),
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  };
+}
+
+type AboutPage = { name: string; path?: string; description?: string };
+
+/** AboutPage — use on a dedicated `/about` page; link the publisher org. */
+export function aboutPage(page: AboutPage) {
+  const path = page.path ?? '/about';
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    '@id': `${abs(path)}#aboutpage`,
+    url: abs(path),
+    name: page.name,
+    ...(page.description && { description: page.description }),
+    publisher: { '@id': `${abs('/')}#organization` },
+  };
+}
+
+type WebPage = { name: string; path: string; description?: string };
+
+/** Generic WebPage — use for trust/policy pages such as `/trust` (§7.5). */
+export function webPage(page: WebPage) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${abs(page.path)}#webpage`,
+    url: abs(page.path),
+    name: page.name,
+    ...(page.description && { description: page.description }),
+    isPartOf: { '@id': `${abs('/')}#website` },
+  };
+}
