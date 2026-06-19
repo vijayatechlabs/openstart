@@ -226,6 +226,14 @@ Each priority page should begin with 1-2 paragraphs that clearly explain:
 - what problem it solves,
 - where relevant, location / market / pricing signal.
 
+**Filtered / query-param listing pages.** When `<title>`/metadata is generated
+per query param (e.g. `generateMetadata` reading `?city=` or `?brand=`), the
+**visible H1 and answer-first intro must reflect the same filter** — not a generic
+page title. A page whose metadata says "Cars in Pune" while the visible H1 says
+"All Cars" is misaligned: it weakens snippet eligibility and trust, and the
+structured data no longer matches visible content. Drive the H1, intro, and
+metadata from one source of truth for the active filter.
+
 ### 7.2 Non-commodity content standard
 The agent must push the user for content that contains:
 - first-hand experience,
@@ -459,6 +467,7 @@ Before calling a project complete, the agent must confirm:
 - [ ] sitemap.xml exists and is correct.
 - [ ] canonical logic is correct.
 - [ ] visible main content is accessible as text.
+- [ ] on filtered/query-param pages, the visible H1 and answer-first intro match the per-param metadata, not a generic title (see §7.1).
 - [ ] page experience issues on key pages were reviewed.
 - [ ] structured data matches visible content.
 - [ ] preview-control policy was reviewed intentionally.
