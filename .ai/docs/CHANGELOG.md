@@ -2,6 +2,19 @@
 
 Dated record of features, changes, and fixes. Newest first.
 
+## [1.2.1] — 2026-06-19
+### Added
+- AEO §8.4: markdown twin discovery (HTML `alternates.types` link + sitemap.xml at
+  lower priority + llms.txt) and Next.js App Router routing constraints (catch-all
+  cannot be suffixed with `/md`; use `/md/directory/[[...segments]]`) — `#1`, `#5`
+- `.ai/examples/nextjs-seo.ts`: reference `serializeJsonLd` + Organization / WebSite /
+  BreadcrumbList / LocalBusiness JSON-LD builders, cross-linked from §8.3 — `#4`
+- AEO §7.1 + checklists: H1/answer-first-intro must match per-query-param metadata on
+  filtered listing pages — `#2`
+- ONBOARD: brownfield `.project/` → `.ai/docs/` migration-map appendix and the
+  dual-changelog standing rule (CHANGELOG vs AEO-CHANGES) — `#3`
+- All five items reported via `/feedback` from the vishwakarm consumer project.
+
 ## [Unreleased]
 ### Added
 - Project scaffolded from the VijayaTech Project Framework template.
