@@ -15,6 +15,7 @@
 - [ ] llms.txt created or intentionally skipped.
 - [ ] robots.txt AI crawler policy reviewed.
 - [ ] markdown twins created or intentionally skipped.
+- [ ] twin discovery wired where twins exist (HTML `alternates.types` link + sitemap.xml at lower priority + llms.txt).
 - [ ] Dualmark considered and justified if used.
 - [ ] answer-first improvements proposed.
 - [ ] FAQ/comparison structure proposed where helpful.

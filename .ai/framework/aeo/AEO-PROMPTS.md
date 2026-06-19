@@ -33,6 +33,11 @@ Rules:
 - show diffs/snippets before finalizing major files
 - do not force Dualmark unless justified
 - keep schema truthful
+- if you add markdown twins, wire all three discovery surfaces (HTML alternate
+  link, sitemap.xml at lower priority, llms.txt) per §8.4.1
+- on Next.js App Router, never suffix `/md` after a catch-all — `[[...segments]]/md`
+  won't build; use `/md/directory/[[...segments]]` for directory twins and
+  `/provider/[slug]/md` for single dynamic segments (§8.4.2)
 - document work in `.ai/docs/AEO-CHANGES.md`
 After changes, provide a verification checklist.
 

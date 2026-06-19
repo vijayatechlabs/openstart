@@ -284,6 +284,45 @@ Only recommend it when:
 
 If not, the agent should implement the rest of the framework without forcing markdown routing.
 
+#### 8.4.1 Markdown twin discovery (when twins exist)
+A markdown twin only helps if crawlers can find it. When twins are implemented, the
+agent must wire up all three discovery surfaces — listing a twin in `llms.txt` alone
+is not enough:
+
+1. **HTML alternate link** — every HTML page that has a twin must expose it:
+   ```html
+   <link rel="alternate" type="text/markdown" href="https://example.com/provider/acme/md">
+   ```
+   In Next.js App Router, emit this from `generateMetadata`:
+   ```ts
+   export async function generateMetadata({ params }): Promise<Metadata> {
+     const pageUrl = `https://example.com/provider/${params.slug}`;
+     return {
+       alternates: {
+         canonical: pageUrl,
+         types: { 'text/markdown': `${pageUrl}/md` },
+       },
+     };
+   }
+   ```
+2. **sitemap.xml** — include twin URLs at a **lower priority** than their HTML
+   counterparts so they are discoverable without competing with the canonical page.
+3. **llms.txt** — cross-reference the twins so AI-first crawlers find them directly.
+
+#### 8.4.2 Next.js App Router routing constraint for twins
+Next.js rejects a catch-all that is **not the last URL segment**, so a twin route
+like `app/[[...segments]]/md/route.ts` will not build — the `/md` suffix cannot
+follow a catch-all.
+
+- **Single dynamic segment** → suffix works: `app/provider/[slug]/md/route.ts`
+  serves `/provider/acme/md`. ✅
+- **Catch-all (directory) twins** → move `/md` to the front as a fixed prefix:
+  `app/md/directory/[[...segments]]/route.ts` serves `/md/directory/foo/bar`
+  instead of the invalid `/directory/foo/bar/md`. ✅
+
+Keep the twin URL shape consistent with whatever the alternate link, sitemap, and
+llms.txt advertise.
+
 ---
 
 ## 9. Measurement framework
@@ -425,6 +464,7 @@ Before calling a project complete, the agent must confirm:
 - [ ] llms.txt created or intentionally skipped.
 - [ ] robots.txt AI crawler policy reviewed.
 - [ ] markdown twins created or intentionally skipped.
+- [ ] twin discovery wired where twins exist (HTML `alternates.types` link + sitemap.xml at lower priority + llms.txt) — see §8.4.1.
 - [ ] Dualmark considered and justified if used.
 - [ ] answer-first improvements proposed.
 - [ ] FAQ/comparison structure proposed where helpful.
