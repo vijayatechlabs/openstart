@@ -50,8 +50,21 @@ This appends a structured entry to `.ai/docs/FRAMEWORK-FEEDBACK.md` **and** prin
 a GitHub issue (title / body / labels) ready to paste at
 `github.com/vijayatechlabs/openstart/issues/new`, or a `gh issue create` one-liner.
 
-Why both? The local log always works offline and travels with the project; the
-GitHub issue is the shared, triageable queue visible to all projects and agents.
+**The required action is filing the GitHub issue** — that is the canonical,
+triageable queue. The local `FRAMEWORK-FEEDBACK.md` log is an **optional**
+convenience for offline/draft capture; it is not a second system of record.
+
+### Upstream-only mode (skip the local log)
+Projects that always file directly to GitHub can opt out of the local log:
+
+```bash
+touch .ai/FEEDBACK_UPSTREAM_ONLY      # marker file
+echo ".ai/docs/FRAMEWORK-FEEDBACK.md" >> .gitignore   # optional
+```
+
+With the marker present, `feedback.sh` skips the local append (and still prints the
+issue text), and `sync.sh` will not re-seed `FRAMEWORK-FEEDBACK.md`. Record the
+choice in `PROJECT-CONTEXT.md` so it survives onboarding.
 
 ## Fields
 
@@ -81,12 +94,15 @@ When a user asks you to submit feedback, report a bug, or request a feature for
 the **OpenStart framework** itself:
 
 1. Run `bash .ai/framework/feedback.sh "<message>" [--type …] [--area …]`
-   (or `/feedback` in Claude Code) to log it locally and get the issue text.
+   (or `/feedback` in Claude Code) to get the issue text (and a local log entry
+   unless the project is in upstream-only mode).
 2. **Show the issue text to the user. Do not run `gh issue create` automatically.**
    Ask the user to confirm before filing — it is an external write (see
    `AGENT-GUIDE.md §9` guardrails).
 3. If the user confirms, run the printed `gh issue create -R vijayatechlabs/openstart …`
-   one-liner and report the returned issue URL.
+   one-liner and report the returned issue URL. **Filing the issue is the required
+   step; the local log is optional** — do not block on it, and skip it entirely when
+   `.ai/FEEDBACK_UPSTREAM_ONLY` is present.
 
 Override the target repo via `FEEDBACK_REPO=<owner/name>` env var if needed.
 

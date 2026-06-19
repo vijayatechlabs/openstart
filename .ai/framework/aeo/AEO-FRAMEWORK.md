@@ -226,6 +226,15 @@ Each priority page should begin with 1-2 paragraphs that clearly explain:
 - what problem it solves,
 - where relevant, location / market / pricing signal.
 
+**Filtered listing pages (query-param or path-segment).** When `<title>`/metadata is
+generated per filter — whether from query params (e.g. `generateMetadata` reading
+`?city=` or `?brand=`) or from path segments (e.g. `/directory/cars/pune/koregaon-park`)
+— the **visible H1 and answer-first intro must reflect the same filter**, not a
+generic page title. A page whose metadata says "Cars in Pune" while the visible H1
+says "All Cars" is misaligned: it weakens snippet eligibility and trust, and the
+structured data no longer matches visible content. Drive the H1, intro, and metadata
+from one source of truth for the active filter.
+
 ### 7.2 Non-commodity content standard
 The agent must push the user for content that contains:
 - first-hand experience,
@@ -249,6 +258,34 @@ Important facts must exist as text in the DOM and not only inside:
 - client-only widgets,
 - inaccessible visual components.
 
+### 7.5 Standalone trust / about / faq pages
+Answer engines cite **dedicated, indexable pages** more reliably than homepage
+sections behind `/#anchors`. For queries like "how does X verify providers", "is X
+affiliated with the government", or "is X legit", a fragment URL is a weak citation
+target; a standalone page is a strong one.
+
+When the homepage carries meaningful trust/about/FAQ content, the agent should
+propose splitting it into dedicated routes backed by a **shared content module**
+(single source of truth, rendered in both places):
+
+- `marketing-content.ts` — FAQs, verification pillars, company facts.
+- The homepage shows an **excerpt** and links to the full page (real route, not
+  `/#faq`); footers link to the dedicated pages.
+
+Minimal layout and schema mapping:
+
+| Route | Content | JSON-LD `@type` |
+|---|---|---|
+| `/faq` | full FAQ list | `FAQPage` |
+| `/about` | company story, mission, team | `AboutPage` |
+| `/trust` | verification, safety, policies | `WebPage` |
+| `/` (home) | FAQ **excerpt** + links | `WebSite` / `Organization` (existing) |
+
+Rules: only mark up Q&A/claims that are **visible** on the page; link the dedicated
+pages from real navigation/footer (not anchors); keep one content source feeding
+both excerpt and full page. See `.ai/examples/nextjs-seo.ts` for `faqPage`,
+`aboutPage`, and `webPage` builders.
+
 ---
 
 ## 8. Technical standards the agent must enforce
@@ -260,6 +297,23 @@ The agent must:
 - explicitly review Google-Extended policy with the user,
 - add sitemap reference,
 - review AI crawler allowances for broader AEO strategy.
+
+#### 8.1.1 AI crawler allow-list template (opt-in)
+For a project that has decided it **wants** AI visibility on its public pages, the
+agent may propose an explicit allow-list rather than relying on defaults. The
+pattern is **allow-public / deny-private**: every crawler (including named AI bots)
+gets the same private exclusions (`/admin`, `/dashboard`, auth/API routes) and is
+welcomed everywhere else.
+
+Decision guide the agent must walk through with the owner before allowing:
+- **Named AI crawlers** (GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, CCBot,
+  Applebot-Extended, …) — allow only if the owner accepts AI training/answer use.
+- **Google-Extended** — allow = content may feed Google's generative AI; block =
+  opt out of generative-AI use. **Neither choice affects normal Googlebot crawling
+  or Search ranking** (separate user-agent). Decide deliberately, never by default.
+
+See `.ai/examples/nextjs-robots.ts` for a Next.js App Router `robots.ts`
+reference (private-path list, AI crawler array, sitemap/host wiring).
 
 ### 8.2 sitemap standard
 The agent must:
@@ -275,6 +329,10 @@ The agent must:
 - add Service / Product / SoftwareApplication / Article / FAQPage / HowTo as appropriate,
 - avoid fake reviews, fake FAQs, fake prices, or invisible content.
 
+For Next.js App Router, see `.ai/examples/nextjs-seo.ts` for reference
+`serializeJsonLd` + Organization / WebSite / BreadcrumbList / LocalBusiness
+builders.
+
 ### 8.4 markdown / Dualmark standard
 The agent must treat Dualmark as optional infrastructure for broader AEO, not a universal requirement.
 Only recommend it when:
@@ -283,6 +341,64 @@ Only recommend it when:
 - the user wants broader AI assistant optimization beyond Google.
 
 If not, the agent should implement the rest of the framework without forcing markdown routing.
+
+#### 8.4.1 Markdown twin discovery (when twins exist)
+A markdown twin only helps if crawlers can find it. When twins are implemented, the
+agent must wire up all three discovery surfaces — listing a twin in `llms.txt` alone
+is not enough:
+
+1. **HTML alternate link** — every HTML page that has a twin must expose it:
+   ```html
+   <link rel="alternate" type="text/markdown" href="https://example.com/provider/acme/md">
+   ```
+   In Next.js App Router, emit this from `generateMetadata`. The alternate `href`
+   must match the **actual twin route shape** (suffix for single dynamic segments;
+   prefix for catch-all directory twins — see §8.4.2):
+
+   *Single dynamic segment* (suffix twin):
+   ```ts
+   export async function generateMetadata({ params }): Promise<Metadata> {
+     const pageUrl = `https://example.com/provider/${params.slug}`;
+     return {
+       alternates: {
+         canonical: pageUrl,
+         types: { 'text/markdown': `${pageUrl}/md` },
+       },
+     };
+   }
+   ```
+
+   *Catch-all directory* (prefix twin — `/md/directory/...`, not `/directory/.../md`):
+   ```ts
+   export async function generateMetadata({ params }): Promise<Metadata> {
+     const segments = (params.segments as string[]).join('/');
+     const pageUrl = `https://example.com/directory/${segments}`;
+     return {
+       alternates: {
+         canonical: pageUrl,
+         types: { 'text/markdown': `https://example.com/md/directory/${segments}` },
+       },
+     };
+   }
+   ```
+2. **sitemap.xml** — include twin URLs at a **lower priority** than their HTML
+   counterparts so they are discoverable without competing with the canonical page
+   (e.g. HTML `priority: 1.0`, twin `priority: 0.5`; omit `changefreq` on twins if unsure).
+3. **llms.txt** — cross-reference the twins so AI-first crawlers find them directly.
+
+#### 8.4.2 Next.js App Router routing constraint for twins
+Next.js rejects a catch-all that is **not the last URL segment**, so twin routes
+like `app/[[...segments]]/md/route.ts` or `app/[...segments]/md/route.ts` will not
+build — the `/md` suffix cannot follow an optional or required catch-all.
+
+- **Single dynamic segment** → suffix works: `app/provider/[slug]/md/route.ts`
+  serves `/provider/acme/md`. ✅
+- **Catch-all (directory) twins** → move `/md` to the front as a fixed prefix:
+  `app/md/directory/[[...segments]]/route.ts` serves `/md/directory/foo/bar`
+  instead of the invalid `/directory/foo/bar/md`. ✅
+
+Keep the twin URL shape consistent with whatever the alternate link, sitemap, and
+llms.txt advertise.
 
 ---
 
@@ -314,6 +430,29 @@ If GA4 exists, the agent should provide instructions for:
 - conversion analysis by AI referrals.
 
 But the agent must state clearly: Google AI Overviews / AI Mode traffic is not separated into a special Search Console search type; it appears within regular web search reporting.
+
+#### 9.3.1 Concrete implementation — `ai_referral_landing` event
+For sites with GA4 (`gtag.js`), the assistants that send a real `document.referrer`
+(ChatGPT, Perplexity, Claude, Copilot, etc. — *not* Google AI Overviews) can be
+captured with a custom event:
+
+1. On client-side landing, match `document.referrer`'s host against a source
+   pattern list and, on a hit, fire:
+   ```ts
+   gtag('event', 'ai_referral_landing', {
+     ai_source,            // 'chatgpt' | 'perplexity' | 'claude' | …
+     page_path,            // location.pathname + search
+     referrer,             // raw document.referrer
+   });
+   ```
+2. In the GA4 UI: register `ai_source` as an event-scoped custom dimension, build a
+   free-form exploration on the event, and optionally add an "AI Assistants" channel
+   group.
+3. Verify in GA4 **DebugView** before shipping.
+
+See `.ai/examples/nextjs-analytics.ts` for a reference implementation (source
+regex list, `detectAiSource`, `trackAiReferral`, client wiring, and the GA4 admin
++ DebugView checklist).
 
 ---
 
@@ -380,6 +519,10 @@ Rules:
 - keep changes minimal and framework-native
 - show diffs/snippets for major files before finalizing
 - do not force Dualmark unless justified
+- keep schema truthful
+- on filtered listing pages, drive H1, answer-first intro, and metadata from one source of truth (§7.1)
+- if you add markdown twins, wire all three discovery surfaces (HTML alternate link, sitemap.xml at lower priority, llms.txt) per §8.4.1; alternate href must match the actual twin route shape
+- on Next.js App Router, never suffix /md after a catch-all — use /md/directory/[[...segments]] for directory twins (§8.4.2)
 - document every important change in .ai/docs/AEO-CHANGES.md
 After implementation, give me a verification checklist.
 ```
@@ -416,6 +559,7 @@ Before calling a project complete, the agent must confirm:
 - [ ] sitemap.xml exists and is correct.
 - [ ] canonical logic is correct.
 - [ ] visible main content is accessible as text.
+- [ ] on filtered listing pages (query-param or path-segment), the visible H1 and answer-first intro match the per-filter metadata, not a generic title (see §7.1).
 - [ ] page experience issues on key pages were reviewed.
 - [ ] structured data matches visible content.
 - [ ] preview-control policy was reviewed intentionally.
@@ -425,6 +569,7 @@ Before calling a project complete, the agent must confirm:
 - [ ] llms.txt created or intentionally skipped.
 - [ ] robots.txt AI crawler policy reviewed.
 - [ ] markdown twins created or intentionally skipped.
+- [ ] twin discovery wired where twins exist (HTML `alternates.types` link + sitemap.xml at lower priority + llms.txt) — see §8.4.1.
 - [ ] Dualmark considered and justified if used.
 - [ ] answer-first improvements proposed.
 - [ ] FAQ/comparison structure proposed where helpful.

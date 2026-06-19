@@ -249,10 +249,13 @@ bash .ai/framework/feedback.sh "<what is missing or broken>" --type enhancement 
 /feedback "<what is missing or broken>" --type enhancement --area onboard
 ```
 
-This logs the item to `.ai/docs/FRAMEWORK-FEEDBACK.md` and prints a ready-to-file
-GitHub issue targeting `vijayatechlabs/openstart`. **Always ask the user before
-filing the issue** — it is an external write. See `.ai/framework/FEEDBACK.md` for
-the full pipeline: types, areas, triage rules, and maintainer workflow.
+This prints a ready-to-file GitHub issue targeting `vijayatechlabs/openstart` and
+appends a local entry to `.ai/docs/FRAMEWORK-FEEDBACK.md`. **Filing the GitHub
+issue is the required action** (GitHub is the canonical queue); the local log is an
+**optional** offline convenience. If the project sets a `.ai/FEEDBACK_UPSTREAM_ONLY`
+marker, skip the local log entirely. **Always ask the user before filing the
+issue** — it is an external write. See `.ai/framework/FEEDBACK.md` for the full
+pipeline: types, areas, upstream-only mode, triage rules, and maintainer workflow.
 
 ---
 

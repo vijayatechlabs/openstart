@@ -6,6 +6,7 @@
 - [ ] sitemap.xml exists and is correct.
 - [ ] canonical logic is correct.
 - [ ] visible main content is accessible as text.
+- [ ] on filtered listing pages (query-param or path-segment), the visible H1 and answer-first intro match the per-filter metadata (not a generic title).
 - [ ] page experience issues on key pages were reviewed.
 - [ ] structured data matches visible content.
 - [ ] preview-control policy was reviewed intentionally.
@@ -15,6 +16,7 @@
 - [ ] llms.txt created or intentionally skipped.
 - [ ] robots.txt AI crawler policy reviewed.
 - [ ] markdown twins created or intentionally skipped.
+- [ ] twin discovery wired where twins exist (HTML `alternates.types` link + sitemap.xml at lower priority + llms.txt).
 - [ ] Dualmark considered and justified if used.
 - [ ] answer-first improvements proposed.
 - [ ] FAQ/comparison structure proposed where helpful.
