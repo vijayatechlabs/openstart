@@ -366,6 +366,29 @@ If GA4 exists, the agent should provide instructions for:
 
 But the agent must state clearly: Google AI Overviews / AI Mode traffic is not separated into a special Search Console search type; it appears within regular web search reporting.
 
+#### 9.3.1 Concrete implementation — `ai_referral_landing` event
+For sites with GA4 (`gtag.js`), the assistants that send a real `document.referrer`
+(ChatGPT, Perplexity, Claude, Copilot, etc. — *not* Google AI Overviews) can be
+captured with a custom event:
+
+1. On client-side landing, match `document.referrer`'s host against a source
+   pattern list and, on a hit, fire:
+   ```ts
+   gtag('event', 'ai_referral_landing', {
+     ai_source,            // 'chatgpt' | 'perplexity' | 'claude' | …
+     page_path,            // location.pathname + search
+     referrer,             // raw document.referrer
+   });
+   ```
+2. In the GA4 UI: register `ai_source` as an event-scoped custom dimension, build a
+   free-form exploration on the event, and optionally add an "AI Assistants" channel
+   group.
+3. Verify in GA4 **DebugView** before shipping.
+
+See `.ai/examples/nextjs-analytics.ts` for a reference implementation (source
+regex list, `detectAiSource`, `trackAiReferral`, client wiring, and the GA4 admin
++ DebugView checklist).
+
 ---
 
 ## 10. Required deliverables from the AI agent
