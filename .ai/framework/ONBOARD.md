@@ -81,6 +81,9 @@ The plan must contain:
    - Fill `PROJECT-CONTEXT`, `CURRENT-STATUS`, `GOALS`, `TASKS`, `STAKEHOLDERS`
      from what Discover found; `TODO:` anything unknown.
    - Seed `.ai/docs/CHANGELOG.md` with a dated "Onboarded to OpenStart vX" entry.
+   - For brownfield projects with a legacy `.project/`/`docs/` tree, fold it in per
+     the **Brownfield migration map** appendix below, and honor the dual-changelog
+     standing rule (product log vs AEO log).
 3. Apply the approved decisions from the Plan (e.g. chosen project shape).
 
 ## Phase 4 · Verify (automatic)
@@ -106,3 +109,42 @@ bash /tmp/openstart/.ai/framework/sync.sh             # Phase 3 mechanics
 ```
 Pin a release with `FRAMEWORK_REF=v1.0.0`. Updates later are just
 `bash .ai/framework/sync.sh` from the project root.
+
+---
+
+## Appendix · Brownfield migration map (`.project/` → `.ai/docs/`)
+
+Many brownfield projects already keep notes under a legacy `.project/` folder
+(or a `docs/` / `notes/` equivalent). During **Phase 3 · Reconcile**, fold that
+content into the canonical `.ai/docs/*` targets by topic — don't leave two
+parallel doc trees. Use this as the default map; map anything not listed by
+topic, and mark unknown owners with `TODO:`.
+
+| Legacy `.project/*` (typical)        | Canonical `.ai/docs/*`     | Notes |
+|--------------------------------------|----------------------------|-------|
+| `overview.md` / `about.md` / `readme.md` | `PROJECT-CONTEXT.md`   | business context, scope, constraints |
+| `stack.md` / `architecture.md`       | `STACK.md`                 | commands, runtime, services |
+| `status.md` / `progress.md`          | `CURRENT-STATUS.md`        | phase, done / in-progress / blocked |
+| `goals.md` / `roadmap.md`            | `GOALS.md`                 | objectives; near-term → `NEXT-ACTIONS.md` |
+| `tasks.md` / `todo.md` / `backlog.md`| `TASKS.md`                 | open work items |
+| `decisions.md` / `adr/*`             | `DECISIONS.md`             | one entry per decision, dated |
+| `risks.md` / `issues.md`             | `RISKS.md`                 | risks + tech debt |
+| `stakeholders.md` / `team.md`        | `STAKEHOLDERS.md`          | people, roles, contacts |
+| `changelog.md` / `history.md`        | `CHANGELOG.md`             | product/feature/fix log (see standing rule below) |
+| `seo.md` / `aeo.md` / `marketing.md` | `AEO-CHANGES.md`           | SEO/AEO work only (see standing rule below) |
+| `data.md` / `schema-notes.md`        | `DATA-LOG.md`              | data-model notes |
+
+After folding content, delete the legacy files in the same change so there is a
+single source of truth, and record what moved where in the Phase 4 summary.
+
+### Dual-changelog standing rule
+OpenStart keeps **two separate logs on purpose** — record this as a standing rule
+under `PROJECT-CONTEXT.md` → *Important notes* so it survives future onboarding:
+
+- **`.ai/docs/CHANGELOG.md`** — product/feature/fix history (what shipped).
+- **`.ai/docs/AEO-CHANGES.md`** — SEO / Google-AI / broader-AEO work only, per
+  `framework/aeo/AEO-FRAMEWORK.md` §10.
+
+Do **not** merge a legacy single changelog into one file: route product entries to
+`CHANGELOG.md` and SEO/AEO entries to `AEO-CHANGES.md`. Keeping them split keeps the
+AEO audit trail (§10 deliverable) clean and independently reviewable.
