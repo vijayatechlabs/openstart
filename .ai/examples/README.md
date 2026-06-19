@@ -37,5 +37,14 @@ see the target before running `/onboard`. Fictional project — illustration onl
 
 ---
 
+## `nextjs-seo.ts` (reference code)
+
+Copy-paste-ready JSON-LD builders for Next.js App Router — `serializeJsonLd`
+plus `organization`, `website`, `breadcrumbList`, and `localBusiness`. Drop into
+`lib/seo.ts`, wire to real data, and keep schema truthful and aligned with
+visible content (see `framework/aeo/AEO-FRAMEWORK.md` §8.3).
+
+---
+
 Delete this folder in your own project — it ships only as a reference in the
 template.

@@ -275,6 +275,10 @@ The agent must:
 - add Service / Product / SoftwareApplication / Article / FAQPage / HowTo as appropriate,
 - avoid fake reviews, fake FAQs, fake prices, or invisible content.
 
+For Next.js App Router, see `.ai/examples/nextjs-seo.ts` for reference
+`serializeJsonLd` + Organization / WebSite / BreadcrumbList / LocalBusiness
+builders.
+
 ### 8.4 markdown / Dualmark standard
 The agent must treat Dualmark as optional infrastructure for broader AEO, not a universal requirement.
 Only recommend it when:
