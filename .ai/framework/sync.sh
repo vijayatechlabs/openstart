@@ -93,7 +93,9 @@ say ""
 say "Project docs (.ai/docs/ — created only if missing):"
 while IFS= read -r src; do
   rel="${src#"$tmp"/}"
-  if [ -e "$rel" ]; then
+  if [ "$rel" = ".ai/docs/FRAMEWORK-FEEDBACK.md" ] && [ -f ".ai/FEEDBACK_UPSTREAM_ONLY" ]; then
+    act SKIP "$rel" "upstream-only marker — not seeded"
+  elif [ -e "$rel" ]; then
     act SKIP "$rel" "exists — left as-is"
   else
     act CREATE "$rel" "template seeded"

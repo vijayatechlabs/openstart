@@ -19,7 +19,7 @@ match the row, don't create a new file.
 | Data sources, exports, provenance, sensitivity | `.ai/docs/DATA-LOG.md` |
 | Actual data files / datasets / exports | `.ai/docs/data/` |
 | AEO / SEO work performed | `.ai/docs/AEO-CHANGES.md` |
-| Framework feedback (local log of gaps to file upstream) | `.ai/docs/FRAMEWORK-FEEDBACK.md` |
+| Framework feedback (local log of gaps to file upstream) — **optional**, skipped in upstream-only mode (`.ai/FEEDBACK_UPSTREAM_ONLY`) | `.ai/docs/FRAMEWORK-FEEDBACK.md` |
 | Blog/PR content briefs from shipped user-facing features | `.ai/docs/CONTENT-PIPELINE.md` |
 
 ## Rules

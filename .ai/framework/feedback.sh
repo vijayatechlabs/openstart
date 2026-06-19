@@ -111,15 +111,22 @@ short="${message:0:70}"
 
 log="$dir/.ai/docs/FRAMEWORK-FEEDBACK.md"
 
-# ---- 1. Append to local log ---------------------------------------------------
-if [ ! -f "$log" ]; then
-  mkdir -p "$dir/.ai/docs"
-  printf '# OpenStart framework feedback (from %s)\n\nEntries to file as issues on %s.\n' \
-    "$project" "$REPO" > "$log"
-fi
+# Projects that file directly upstream can opt out of the local log by creating
+# an empty marker file: .ai/FEEDBACK_UPSTREAM_ONLY (GitHub is the canonical queue).
+upstream_only=0
+[ -f "$dir/.ai/FEEDBACK_UPSTREAM_ONLY" ] && upstream_only=1
 
-printf '\n## [%s] %s: %s\n- **Project:** %s\n- **Framework:** %s\n- **Area:** %s\n- **Feedback:** %s\n- **Status:** open\n' \
-  "$date" "$type_val" "$short" "$project" "$version" "$area" "$message" >> "$log"
+# ---- 1. Append to local log (skipped in upstream-only mode) -------------------
+if [ $upstream_only -eq 0 ]; then
+  if [ ! -f "$log" ]; then
+    mkdir -p "$dir/.ai/docs"
+    printf '# OpenStart framework feedback (from %s)\n\nEntries to file as issues on %s.\n' \
+      "$project" "$REPO" > "$log"
+  fi
+
+  printf '\n## [%s] %s: %s\n- **Project:** %s\n- **Framework:** %s\n- **Area:** %s\n- **Feedback:** %s\n- **Status:** open\n' \
+    "$date" "$type_val" "$short" "$project" "$version" "$area" "$message" >> "$log"
+fi
 
 # ---- 2. Print the issue -------------------------------------------------------
 title="[feedback] ${type_val}: ${short}"
@@ -134,7 +141,11 @@ ${message}
 _(maintainer to fill)_"
 
 say ""
-say "✓ logged to $log"
+if [ $upstream_only -eq 0 ]; then
+  say "✓ logged to $log"
+else
+  say "✓ upstream-only mode (.ai/FEEDBACK_UPSTREAM_ONLY) — local log skipped"
+fi
 say ""
 say "File it on the framework queue → https://github.com/${REPO}/issues/new"
 say ""
