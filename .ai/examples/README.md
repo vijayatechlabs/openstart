@@ -51,6 +51,13 @@ from `document.referrer` and fires a GA4 `ai_referral_landing` event. Drop into
 `lib/analytics.ts`; includes client wiring and the GA4 admin + DebugView checklist
 (see `framework/aeo/AEO-FRAMEWORK.md` §9.3.1).
 
+## `nextjs-robots.ts` (reference code)
+
+Next.js App Router `app/robots.ts` for public AEO surfaces — allow-public /
+deny-private with an explicit AI-crawler allow-list (GPTBot, ClaudeBot,
+PerplexityBot, Google-Extended, …) and a Google-Extended allow-vs-block decision
+note (see `framework/aeo/AEO-FRAMEWORK.md` §8.1.1).
+
 ---
 
 Delete this folder in your own project — it ships only as a reference in the

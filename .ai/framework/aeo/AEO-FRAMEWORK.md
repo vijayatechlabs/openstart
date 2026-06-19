@@ -269,6 +269,23 @@ The agent must:
 - add sitemap reference,
 - review AI crawler allowances for broader AEO strategy.
 
+#### 8.1.1 AI crawler allow-list template (opt-in)
+For a project that has decided it **wants** AI visibility on its public pages, the
+agent may propose an explicit allow-list rather than relying on defaults. The
+pattern is **allow-public / deny-private**: every crawler (including named AI bots)
+gets the same private exclusions (`/admin`, `/dashboard`, auth/API routes) and is
+welcomed everywhere else.
+
+Decision guide the agent must walk through with the owner before allowing:
+- **Named AI crawlers** (GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, CCBot,
+  Applebot-Extended, …) — allow only if the owner accepts AI training/answer use.
+- **Google-Extended** — allow = content may feed Google's generative AI; block =
+  opt out of generative-AI use. **Neither choice affects normal Googlebot crawling
+  or Search ranking** (separate user-agent). Decide deliberately, never by default.
+
+See `.ai/examples/nextjs-robots.ts` for a Next.js App Router `robots.ts`
+reference (private-path list, AI crawler array, sitemap/host wiring).
+
 ### 8.2 sitemap standard
 The agent must:
 - ensure sitemap.xml lists canonical URLs,
