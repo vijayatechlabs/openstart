@@ -1,6 +1,6 @@
 ---
 name: aeo-framework
-description: Use when implementing or auditing AEO (Answer Engine Optimization) and Google AI visibility — SEO, llms.txt, robots.txt, sitemaps, schema/JSON-LD, markdown twins, AI crawler routing, or GA4/Search Console measurement — for a website or web app.
+description: Use when implementing or auditing AEO (Answer Engine Optimization) and Google AI visibility — SEO, llms.txt, robots.txt, sitemaps, schema/JSON-LD, markdown twins, IndexNow, AI crawler routing, or GA4/Search Console measurement — for a website or web app.
 ---
 
 # AEO Framework Skill
@@ -17,7 +17,7 @@ Use this skill to implement VijayaTech Labs' dual-standard visibility system:
 ## When to use
 Use this skill when the user wants:
 - AEO or SEO setup for a new or existing project.
-- llms.txt, robots.txt, sitemap, schema, markdown twins, or AI crawler routing.
+- llms.txt, robots.txt, sitemap, schema, markdown twins, IndexNow, or AI crawler routing.
 - Google Search AI visibility checks.
 - GA4 AI referral tracking guidance.
 - A repository audit before implementation.
@@ -49,6 +49,7 @@ Use this skill when the user wants:
 - canonical tags
 - JSON-LD schema
 - priority page templates
+- IndexNow key file + post-deploy submit path (if enabled)
 - GA4 setup
 - Search Console setup
 
@@ -57,7 +58,8 @@ Use this skill when the user wants:
 2. Fix page experience and content quality.
 3. Add truthful structured data.
 4. Add llms.txt and markdown twins if appropriate.
-5. Add AI referral measurement.
+5. Add IndexNow only after baseline SEO and a real deploy-completion signal (§8.5).
+6. Add AI referral measurement.
 
 ## Reminder
 For Google AI visibility, llms.txt and markdown twins are not required. They are optional for broader AEO.

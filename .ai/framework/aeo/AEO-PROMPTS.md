@@ -41,6 +41,7 @@ Rules:
 - on Next.js App Router, never suffix `/md` after a catch-all — `[[...segments]]/md`
   won't build; use `/md/directory/[[...segments]]` for directory twins and
   `/provider/[slug]/md` for single dynamic segments (§8.4.2)
+- for IndexNow, enforce post-deployment triggers with durable cursors, support root vs path-scoped keys, use delta-based URL selection (HTML + twin), and handle 200/202/429 status codes. Avoid overclaiming ranking or LLM training ingestion.
 - document work in `.ai/docs/AEO-CHANGES.md`
 After changes, provide a verification checklist.
 

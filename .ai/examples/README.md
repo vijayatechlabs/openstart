@@ -60,6 +60,14 @@ deny-private with an explicit AI-crawler allow-list (GPTBot, ClaudeBot,
 PerplexityBot, Google-Extended, …) and a Google-Extended allow-vs-block decision
 note (see `framework/aeo/AEO-FRAMEWORK.md` §8.1.1).
 
+## `nextjs-indexnow.ts` (reference code)
+
+IndexNow helpers for post-deploy URL notify: `validateKey`, `getKeyLocation`,
+host filter, batch chunking, `submitIndexNow` / `submitIndexNowAll` (200/202/429).
+Copy into `lib/indexnow.ts`; add a **project-owned** script or webhook. Do not run
+at build time. See `framework/aeo/AEO-FRAMEWORK.md` §8.5 and
+`framework/templates/github/indexnow.ADAPTER.md`.
+
 ---
 
 Delete this folder in your own project — it ships only as a reference in the

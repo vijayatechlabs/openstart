@@ -28,3 +28,4 @@ Planning / Design / Build / Testing / Deployment / Growth
 | STAKEHOLDERS.md | People + agents |
 | DATA-LOG.md | Data provenance (files in `data/`) |
 | AEO-CHANGES.md | AEO/SEO work performed |
+| plans/ | Optional design plans (e.g. IndexNow) |

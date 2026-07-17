@@ -8,6 +8,10 @@
 - Run lint/tests when code changes are made.
 - Preserve canonical URLs unless a change is requested.
 - Keep schema truthful and visible-content aligned.
+- For IndexNow: submit only after deploy completion for this revision; durable
+  cursor for add/update/delete deltas; Glint = one-time `migrate indexnow` then
+  every deploy `glint indexnow`. Never claim crawl, index, ranking, or AI training
+  from a 200/202 receipt.
 - Document work in `.ai/docs/AEO-CHANGES.md`.
 
 ## First response requirement

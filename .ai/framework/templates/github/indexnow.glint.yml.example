@@ -1,0 +1,78 @@
+# indexnow.glint.yml.example — Glint brand sites (EXAMPLE ONLY)
+#
+# Prefer the workflow materialized by Glint (`glint new` / `glint migrate indexnow`)
+# when available. This file documents the adapter contract for Glint.
+#
+# One-time setup (not this workflow):  glint migrate indexnow
+# Every production deploy (this job):  glint indexnow  ← submit, not migrate
+#
+# Requires: durable cursor INDEXNOW_PREV_SHA (repo variable or remote store),
+#           deploy completion signal for THIS sha (adjust trigger for your host).
+
+name: IndexNow (Glint)
+
+on:
+  # Prefer: workflow_call / needs deploy, or repository_dispatch from Coolify
+  deployment_status:
+  repository_dispatch:
+    types: [deploy-succeeded]
+  workflow_dispatch:
+
+concurrency:
+  group: indexnow-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  indexnow:
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'repository_dispatch' ||
+      (github.event_name == 'deployment_status' &&
+       github.event.deployment_status.state == 'success' &&
+       github.event.deployment_status.environment == 'production')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Resolve SHAs
+        id: sha
+        run: |
+          if [ "${{ github.event_name }}" = "deployment_status" ]; then
+            echo "current=${{ github.event.deployment_status.deployment.sha }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "current=${{ github.event.client_payload.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "current=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+          # Durable cursor: repo variable INDEXNOW_PREV_SHA (not ephemeral workspace state)
+          echo "prev=${{ vars.INDEXNOW_PREV_SHA }}" >> "$GITHUB_OUTPUT"
+
+      - name: Submit IndexNow (delta)
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          PREV="${{ steps.sha.outputs.prev }}"
+          CUR="${{ steps.sha.outputs.current }}"
+          if [ -z "$PREV" ]; then
+            echo "INDEXNOW_PREV_SHA unset — refusing full historic submit. Set cursor or use --bootstrap intentionally."
+            exit 1
+          fi
+          pnpm exec glint indexnow \
+            --since-sha "$PREV" \
+            --sha "$CUR"
+
+      # After 200/202 only: advance vars.INDEXNOW_PREV_SHA to current
+      # (use GitHub API / manual ops / remote cursor — implement per brand)
+      - name: Reminder — advance durable cursor
+        if: success()
+        run: echo "Advance INDEXNOW_PREV_SHA → ${{ steps.sha.outputs.current }} after accepted receipt"

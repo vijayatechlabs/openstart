@@ -400,6 +400,62 @@ build — the `/md` suffix cannot follow an optional or required catch-all.
 Keep the twin URL shape consistent with whatever the alternate link, sitemap, and
 llms.txt advertise.
 
+#### 8.4.3 Twin canonical/indexing policy and headers
+To prevent twin markdown files from competing with primary HTML canonical URLs in search engines, projects must enforce a clear duplicate control policy:
+- **Minimum:** The twin page response must return a `Link: <html-canonical>; rel="canonical"` HTTP header (or equivalent HTML meta tag) pointing back to the HTML canonical page. This ensures search engines do not index the twin page as the primary target.
+- **Optional project choice:** Set a `noindex` policy on twins if twin routes are strictly intended for LLM engine retrieval and should be entirely hidden from standard search listings.
+- Maintain identical twin URL shapes across alternate links, sitemap entries, `llms.txt`, and IndexNow submissions.
+
+##### Twin headers + AI fetch lag (evidence-labelled)
+Based on field experience, here are the recommendations for twin delivery:
+
+| Practice | Status in framework |
+|----------|---------------------|
+| All public twins in sitemap | **Required** when twins exist (at lower priority, e.g. 0.5) |
+| UTF-8 + `Content-Disposition: inline` | **Recommended** |
+| `Content-Type: text/plain` for twin body | **Compatibility experiment** — optional default; not an absolute requirement; keep HTML alternate `type="text/markdown"` |
+| IndexNow HTML+twin post-deploy | **Recommended** for Bing-backed discovery speed |
+| Expect assistant fetch lag | **Document** — not a deploy-day pass/fail |
+| “IndexNow causes ChatGPT/training” | **Forbidden claim** — IndexNow only confirms notification receipt |
+
+---
+
+### 8.5 IndexNow standard
+IndexNow is a protocol that allows website owners to notify participating search
+engines about recent URL changes (add, update, delete). Submit via
+`https://api.indexnow.org/indexnow` (or an engine-specific endpoint). Shared
+submissions may be distributed among participants. A successful call is a
+**receipt**, not a crawl or ranking guarantee — see §8.5.5.
+
+Reference helpers: `.ai/examples/nextjs-indexnow.ts`. CI contract:
+`.ai/framework/templates/github/indexnow.ADAPTER.md`.
+
+#### 8.5.1 keyLocation and ownership verification
+The IndexNow protocol requires hosting a unique UTF-8 text key file on your host to verify domain ownership. The key must be between 8 and 128 characters and contain only characters `[A-Za-z0-9-]`.
+- **Option 1: Root-level (`/{key}.txt`)** - Preferred. Verification covers the entire domain.
+- **Option 2: Path-scoped (`/path/{key}.txt`)** - Allowed for mounted sites or subdirectories. Verification is scoped only to URLs matching that subdirectory path prefix. The key file location (`keyLocation`) must match the scope of URLs submitted.
+
+#### 8.5.2 Timing & deployment gate
+- **Deploy completion signal:** Submissions must run only AFTER the deploy completion signal is received (e.g., using a webhook, or `needs: deploy` step in CI/CD). Never run the submit step during build or pre-deployment phases.
+- **Stable key URL returning 200** is a necessary condition, but not sufficient proof of a *new* deployment (as it may return the key from a previous deployment). A revision-specific deploy completion signal or version hash check is required.
+
+#### 8.5.3 URL selection (order of preference)
+When determining which URLs to submit to IndexNow, apply these strategies:
+1. **Primary (Content/deploy delta):** Query the actual git commit diff, CMS webhooks, or dynamic publish event logs to compile the list of added, updated, and deleted URLs since the last successful deployment. This is the only strategy that correctly handles edits and deletes.
+2. **Fallback (RSS/Atom):** Can be used for net-new items only when no deployment cursor exists, and the operator explicitly opts in. **Never** rely on RSS `pubDate` for edits/deletes.
+3. **Bootstrap / full site:** A full sitemap submit is supported only via an explicit operator flag (e.g. `--bootstrap`); it must **never** be triggered automatically on the first enable.
+
+#### 8.5.4 Submission and error handling
+- **Batching:** Group URLs into batches of no more than **10,000** per request.
+- **Twins:** When twin markdown routes exist, submit both the HTML URL and the twin URL on creation/update, and submit both on deletion.
+- **Concurrency & Backoff:** Implement concurrency protection. Honor the `Retry-After` HTTP header if the engine returns a 429 status code.
+- **Response handling:**
+  - **200 OK** and **202 Accepted** must both be handled as successful receipts (where 202 means key validation or crawl queuing is pending). Do not treat 202 as a failure.
+  - Retain submission logs for diagnostic verification.
+
+#### 8.5.5 Explicit non-claims (copy verbatim in agent summaries)
+> IndexNow notifies participating engines that URLs changed. A 200 or 202 response means the request was **received** (202: key validation may still be pending). It does **not** mean the URL was crawled, indexed, ranked, or made available inside any AI assistant. Sitemap discovery, robots policy, content quality, and engine-side systems remain separate.
+
 ---
 
 ## 9. Measurement framework
@@ -570,7 +626,13 @@ Before calling a project complete, the agent must confirm:
 - [ ] robots.txt AI crawler policy reviewed.
 - [ ] markdown twins created or intentionally skipped.
 - [ ] twin discovery wired where twins exist (HTML `alternates.types` link + sitemap.xml at lower priority + llms.txt) — see §8.4.1.
+- [ ] twin duplicate policy set when twins exist (canonical Link to HTML and/or intentional noindex) — see §8.4.3.
 - [ ] Dualmark considered and justified if used.
+- [ ] IndexNow integrated or intentionally skipped — see §8.5:
+  - [ ] valid key + live key file; keyLocation matches submitted URL prefixes (root or path-scoped).
+  - [ ] submit runs only after deploy completion signal for this revision.
+  - [ ] URL delta uses durable cursor (adds + updates + deletes); no auto full historic on first enable.
+  - [ ] 200/202 treated as receipt; 429 backoff; batches ≤ 10_000; twins paired when present.
 - [ ] answer-first improvements proposed.
 - [ ] FAQ/comparison structure proposed where helpful.
 

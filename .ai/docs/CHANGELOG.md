@@ -2,6 +2,15 @@
 
 Dated record of features, changes, and fixes. Newest first.
 
+## [1.3.0] — 2026-07-17
+### Added
+- AEO §8.5: IndexNow standard (deploy gate, keyLocation root/scoped, git/content delta primary, batch ≤10k, 200/202/429, non-claims) — 2026-07-17
+- AEO §8.4.3: twin duplicate policy (canonical Link to HTML / optional noindex) + evidence-labelled twin header guidance — 2026-07-17
+- `AGENT-GUIDE.md` §6, `AEO-CHECKLIST.md`, `AEO-AGENTS.md`, `AEO-PROMPTS.md`, §12 checklist: IndexNow agent rules — 2026-07-17
+- `.ai/examples/nextjs-indexnow.ts`: validateKey, keyLocation, host filter, chunking, submit (200/202/429) — 2026-07-17
+- `.ai/framework/templates/github/`: IndexNow adapter contract + Glint/Next example workflows (not universal runnable) — 2026-07-17
+- `.ai/docs/plans/indexnow.md`: design plan (revised after review) — 2026-07-17
+
 ## [1.2.1] — 2026-06-19
 ### Added
 - AEO §8.4: markdown twin discovery (HTML `alternates.types` link + sitemap.xml at

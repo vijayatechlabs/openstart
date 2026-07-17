@@ -206,6 +206,9 @@ Key rules from that standard:
   experience) **before** advanced AEO tactics like llms.txt or markdown twins.
 - Never invent schema, FAQs, prices, reviews, or claims — keep structured data
   truthful and aligned with visible content.
+- IndexNow (§8.5): notify only after deploy is live for this revision; use a durable
+  URL-delta cursor (not RSS-only); follow the GH adapter contract — Glint sites use
+  `glint indexnow` after setup, not a one-size npm workflow.
 - Document every AEO change in `.ai/docs/AEO-CHANGES.md`.
 
 In Claude Code this is also available as the `aeo-framework` skill. Other agents

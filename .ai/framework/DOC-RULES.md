@@ -21,6 +21,8 @@ match the row, don't create a new file.
 | AEO / SEO work performed | `.ai/docs/AEO-CHANGES.md` |
 | Framework feedback (local log of gaps to file upstream) — **optional**, skipped in upstream-only mode (`.ai/FEEDBACK_UPSTREAM_ONLY`) | `.ai/docs/FRAMEWORK-FEEDBACK.md` |
 | Blog/PR content briefs from shipped user-facing features | `.ai/docs/CONTENT-PIPELINE.md` |
+| Design / implementation plans (optional, work-in-progress) | `.ai/docs/plans/` |
+| Reusable CI adapter contracts / example workflows (framework) | `.ai/framework/templates/` (e.g. `github/indexnow.*`) |
 
 ## Rules
 

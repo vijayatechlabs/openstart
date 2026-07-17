@@ -1,0 +1,73 @@
+# indexnow.next.example.yml — Next.js / custom Node (EXAMPLE ONLY)
+#
+# OpenStart ships helpers in `.ai/examples/nextjs-indexnow.ts`.
+# You must add a project-owned runner, e.g. `scripts/submit-indexnow.ts`
+# that imports those helpers and maps git/CMS delta → URL list.
+#
+# Do NOT treat `git describe` / HEAD~1 as a durable notify cursor in production.
+# Use a repo variable, remote store, or release tag updated only after 200/202.
+
+name: IndexNow (Next.js)
+
+on:
+  deployment_status:
+  repository_dispatch:
+    types: [deploy-succeeded]
+  workflow_dispatch:
+
+concurrency:
+  group: indexnow-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  indexnow:
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'repository_dispatch' ||
+      (github.event_name == 'deployment_status' &&
+       github.event.deployment_status.state == 'success' &&
+       github.event.deployment_status.environment == 'production')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # Or: pnpm install --frozen-lockfile when the project is pnpm-based
+      - run: npm ci
+
+      - name: Resolve SHAs
+        id: sha
+        run: |
+          if [ "${{ github.event_name }}" = "deployment_status" ]; then
+            echo "current=${{ github.event.deployment_status.deployment.sha }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "current=${{ github.event.client_payload.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "current=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+          # Durable cursor — NOT git describe / HEAD~1
+          echo "prev=${{ vars.INDEXNOW_PREV_SHA }}" >> "$GITHUB_OUTPUT"
+
+      - name: Submit IndexNow
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          INDEXNOW_KEY: ${{ vars.INDEXNOW_KEY }}
+          INDEXNOW_PREV_SHA: ${{ steps.sha.outputs.prev }}
+          CURRENT_SHA: ${{ steps.sha.outputs.current }}
+        run: |
+          if [ -z "$INDEXNOW_PREV_SHA" ]; then
+            echo "INDEXNOW_PREV_SHA unset — set durable cursor before first automated run (or pass explicit bootstrap in your script)."
+            exit 1
+          fi
+          # Project-owned file — copy logic from .ai/examples/nextjs-indexnow.ts
+          npx tsx scripts/submit-indexnow.ts
+
+      - name: Reminder — advance durable cursor
+        if: success()
+        run: echo "Advance INDEXNOW_PREV_SHA → ${{ steps.sha.outputs.current }} after accepted receipt"
