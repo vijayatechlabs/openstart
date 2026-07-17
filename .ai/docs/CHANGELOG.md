@@ -10,6 +10,9 @@ Dated record of features, changes, and fixes. Newest first.
 - `.ai/examples/nextjs-indexnow.ts`: validateKey, keyLocation, host filter, chunking, submit (200/202/429) — 2026-07-17
 - `.ai/framework/templates/github/`: IndexNow adapter contract + Glint/Next example workflows (not universal runnable) — 2026-07-17
 - `.ai/docs/plans/indexnow.md`: design plan (revised after review) — 2026-07-17
+- `.ai/framework/VERSION`: bump version to `1.3.0` based on recent IndexNow standard changes — 2026-07-17
+- `.githooks/pre-push`: add pre-push validation script to enforce version match between VERSION and CHANGELOG.md — 2026-07-17
+- `AGENT-GUIDE.md` §10: update Definition of Done to include framework version bump check — 2026-07-17
 
 ## [1.2.1] — 2026-06-19
 ### Added

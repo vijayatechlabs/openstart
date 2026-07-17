@@ -336,7 +336,11 @@ and recorded**. After any meaningful change, run this ritual before calling it d
    stray files; matches repo conventions. In Claude Code, use `/code-review`.
 4. **Update the docs.** At minimum `CHANGELOG.md`, `CURRENT-STATUS.md`, and
    `TASKS.md` (§4). Record any lasting decision in `DECISIONS.md`.
-5. **Hand off to content (only if user-facing).** If the change is something a
+5. **Bump version (if framework updates).** If you modified any reusable standard
+   files under `.ai/framework/` or `.claude/`, bump the version number in
+   `.ai/framework/VERSION` to exactly match the latest version entry in
+   `.ai/docs/CHANGELOG.md`.
+6. **Hand off to content (only if user-facing).** If the change is something a
    user would care about — a new feature, a notable improvement, a launch —
    capture the marketing angle while it's fresh: run `/content "<what shipped>"`
    (or `bash .ai/framework/content.sh`) to queue a brief in
@@ -347,8 +351,8 @@ and recorded**. After any meaningful change, run this ritual before calling it d
 This routine is **identical across every project**; only the *commands* differ,
 and those live in `.ai/docs/STACK.md` — so the standard stays portable while the
 mechanics stay stack-specific. **Scale it to the change:** a typo fix needs only
-step 4; a new endpoint or migration needs steps 1–4; a user-facing feature also
-triggers step 5.
+step 4; a new endpoint or migration needs steps 1–4; a framework update needs
+step 5; a user-facing feature also triggers step 6.
 
 If `.ai/docs/STACK.md` is still an unfilled placeholder, populate it the first time
 you learn how this project builds and tests — then every future change can follow

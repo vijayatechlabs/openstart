@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#
+# Git pre-push hook to verify that the version in .ai/framework/VERSION
+# matches the latest version in .ai/docs/CHANGELOG.md.
+
+set -euo pipefail
+
+CHANGELOG=".ai/docs/CHANGELOG.md"
+VERSION_FILE=".ai/framework/VERSION"
+
+if [ ! -f "$CHANGELOG" ]; then
+    echo "Error: CHANGELOG file not found at $CHANGELOG" >&2
+    exit 1
+fi
+
+if [ ! -f "$VERSION_FILE" ]; then
+    echo "Error: VERSION file not found at $VERSION_FILE" >&2
+    exit 1
+fi
+
+# Extract the latest version from CHANGELOG.md
+# Expected format: ## [X.Y.Z] — YYYY-MM-DD
+CHANGELOG_VERSION=$(grep -m1 '^## \[' "$CHANGELOG" | sed -E 's/## \[(.*)\].*/\1/' || true)
+
+if [ -z "$CHANGELOG_VERSION" ]; then
+    echo "Error: Could not extract latest version from $CHANGELOG" >&2
+    exit 1
+fi
+
+# Read current version from VERSION file
+FRAMEWORK_VERSION=$(tr -d '[:space:]' < "$VERSION_FILE")
+
+if [ -z "$FRAMEWORK_VERSION" ]; then
+    echo "Error: VERSION file at $VERSION_FILE is empty" >&2
+    exit 1
+fi
+
+# Compare the two versions
+if [ "$CHANGELOG_VERSION" != "$FRAMEWORK_VERSION" ]; then
+    echo "========================================================" >&2
+    echo "❌ PUSH BLOCKED: Framework version mismatch!" >&2
+    echo "--------------------------------------------------------" >&2
+    echo "Latest in CHANGELOG.md:  $CHANGELOG_VERSION" >&2
+    echo "Current in VERSION:      $FRAMEWORK_VERSION" >&2
+    echo "========================================================" >&2
+    echo "Please bump .ai/framework/VERSION to match the latest changelog version before pushing." >&2
+    exit 1
+fi
+
+echo "✓ Version verification passed: $FRAMEWORK_VERSION"
+exit 0
