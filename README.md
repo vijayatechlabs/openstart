@@ -1,8 +1,14 @@
 # OpenStart
 
-**An agent-first project framework** — a reusable, **language- and
-framework-agnostic** starting point for building software with mixed human + AI
-teams (Claude Code, Google AntiGravity / Gemini, Codex, Cursor, …).
+**An agent-first project framework** for **websites, landing pages, and product
+apps** — a reusable, **language- and framework-agnostic** starting point for mixed
+human + AI teams (Claude Code, Google AntiGravity / Gemini, Codex, Cursor, …).
+
+**Pair with [Glint](https://github.com/vijayatechlabs/glint) for blogs and long-form
+content.** OpenStart owns site/app operating standards and AEO for marketing
+surfaces; Glint owns the content runtime. Together they keep website, app, and
+content aligned (including content handoff) and target better **SEO** and **AI
+citation eligibility** — not ranking guarantees.
 
 Use it as a GitHub template or run one command in an existing repo, and you get,
 from minute one:
@@ -13,7 +19,7 @@ from minute one:
 - portable **guardrails** + a **Definition of Done** every change follows,
 - a **standard set of project docs** (context, goals, status, tasks, changelog,
   decisions, risks, stakeholders, data log),
-- a built-in **AEO / SEO standard**, and
+- a built-in **AEO / SEO standard** (shared eligibility bar with Glint blogs), and
 - one **onboarding flow** that discovers a project, plans, and (on your approval)
   wires everything in.
 

@@ -187,3 +187,72 @@ export function webPage(page: WebPage) {
     isPartOf: { '@id': `${abs('/')}#website` },
   };
 }
+
+type Person = { name: string; url?: string; jobTitle?: string };
+
+/** Person — authors / team; only fields you can back with visible content. */
+export function person(p: Person) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: p.name,
+    ...(p.url && { url: p.url }),
+    ...(p.jobTitle && { jobTitle: p.jobTitle }),
+  };
+}
+
+type BlogPosting = {
+  headline: string;
+  description?: string;
+  path: string;
+  datePublished: string; // ISO
+  dateModified?: string;
+  image?: string;
+  authorName?: string;
+  authorUrl?: string;
+};
+
+/**
+ * BlogPosting / Article — for marketing long-form or case studies on the site.
+ * For Glint blog posts, prefer Glint’s BlogPosting emission instead of duplicating.
+ */
+export function blogPosting(post: BlogPosting) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.headline,
+    ...(post.description && { description: post.description }),
+    mainEntityOfPage: abs(post.path),
+    datePublished: post.datePublished,
+    dateModified: post.dateModified ?? post.datePublished,
+    ...(post.image && { image: abs(post.image) }),
+    ...(post.authorName && {
+      author: {
+        '@type': 'Person',
+        name: post.authorName,
+        ...(post.authorUrl && { url: post.authorUrl }),
+      },
+    }),
+  };
+}
+
+/**
+ * Open Graph article fields for generateMetadata (Next.js).
+ * Only emit fields you have real dates/authors for (§8.4.6).
+ */
+export function articleOpenGraph(meta: {
+  publishedTime: string;
+  modifiedTime?: string;
+  authors?: string[];
+  tags?: string[];
+  section?: string;
+}) {
+  return {
+    type: 'article' as const,
+    publishedTime: meta.publishedTime,
+    ...(meta.modifiedTime && { modifiedTime: meta.modifiedTime }),
+    ...(meta.authors?.length && { authors: meta.authors }),
+    ...(meta.tags?.length && { tags: meta.tags }),
+    ...(meta.section && { section: meta.section }),
+  };
+}

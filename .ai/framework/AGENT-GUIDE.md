@@ -200,12 +200,22 @@ Any work touching web visibility — SEO, AI Overviews, llms.txt, robots.txt,
 sitemaps, schema, content structure — **must follow
 `.ai/framework/aeo/AEO-FRAMEWORK.md`**.
 
+**OpenStart + Glint pairing:** OpenStart is the framework for **websites, landing
+pages, and product apps**. **Glint** is for **blogs and long-form content**. Both
+aim for better SEO and AI citation **eligibility** (not guarantees). When a product
+and its blog are separate repos, implement site AEO here, blog AEO in Glint
+(`docs/AEO.md` / `docs/UPGRADE.md`), and use content handoff so releases and posts
+stay aligned.
+
 Key rules from that standard:
 - Ask the discovery questions first; do not start coding blind.
 - Fix baseline SEO eligibility (crawlability, indexability, canonical, page
   experience) **before** advanced AEO tactics like llms.txt or markdown twins.
 - Never invent schema, FAQs, prices, reviews, or claims — keep structured data
   truthful and aligned with visible content.
+- Markdown twins: stack-native; preferred headers §8.4.3; edge negotiation only
+  with human approval. No third-party AEO product requirement.
+- Do not recommend Google Indexing API for BlogPosting/general pages (§8.4.7).
 - IndexNow (§8.5): notify only after deploy is live for this revision; use a durable
   URL-delta cursor (not RSS-only); follow the GH adapter contract — Glint sites use
   `glint indexnow` after setup, not a one-size npm workflow.

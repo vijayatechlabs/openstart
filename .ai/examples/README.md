@@ -68,6 +68,23 @@ Copy into `lib/indexnow.ts`; add a **project-owned** script or webhook. Do not r
 at build time. See `framework/aeo/AEO-FRAMEWORK.md` §8.5 and
 `framework/templates/github/indexnow.ADAPTER.md`.
 
+## `llms-txt.TEMPLATE.md` (framework)
+
+Short SaaS/marketing `llms.txt` skeleton under `framework/aeo/` — tour guide,
+not a dump. Link full feed only when bodies exist.
+
+## `nextjs-markdown-twin.ts` (reference code)
+
+Preferred markdown twin headers + `markdownTwinResponse` + alternate metadata
+helper (AEO-FRAMEWORK §8.4.3). For **websites/landings** on Next.js. **Glint blogs**
+use Glint’s engine twins instead — see Glint `docs/AEO.md`. Edge Accept/bot
+negotiation is optional and human-gated (§8.4.4).
+
+## `nextjs-seo.ts` extras
+
+Also includes `person`, `blogPosting`, and `articleOpenGraph` for long-form
+marketing pages (not a substitute for a Glint blog collection).
+
 ---
 
 Delete this folder in your own project — it ships only as a reference in the

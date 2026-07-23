@@ -61,6 +61,37 @@ Focus areas:
 - Search Console verification and diagnostics
 - local business / Merchant Center freshness where relevant
 
+### 2.3 OpenStart (sites) + Glint (blogs) — paired brands
+
+| Product | Primary surface |
+|---------|-----------------|
+| **OpenStart** (this standard) | Websites, landing pages, product/marketing apps |
+| **Glint** | Blogs and long-form content runtime |
+| **Together** | Content handoff keeps product features and posts aligned; shared SEO + AI citation **eligibility** (not guarantees) |
+
+**Paired-brand checklist** (when both repos exist):
+
+- [ ] **Site (OpenStart):** crawlability, schema, robots, llms, landings answer-first
+- [ ] **Blog (Glint):** `glint doctor`, twin headers, llms; upgrade via Glint `docs/UPGRADE.md` — do **not** re-implement the blog engine in the app
+- [ ] **GSC** verified on the domain(s)
+- [ ] **Bing Webmaster** verified (IndexNow / Bing matter for some AI-adjacent paths; Google does **not** use IndexNow)
+- [ ] IndexNow configured on the stack that owns public URL deltas (often the blog)
+- [ ] Content handoff configured (`CONTENT_DIR` / `CONTENT_REPO` → Glint inbox)
+- [ ] No claims that headers or IndexNow alone guarantee citations
+
+### 2.4 Commercial landing (“money page”) pattern
+
+Priority commercial URLs (pricing, product, service, primary CTA pages) should:
+
+1. **Answer first** — the core promise / answer in the first ~100 words of visible text (not only in a hero image).
+2. **One clear H1** that matches the decision the page supports.
+3. **Proof** — original data, product truth, customers, or how-to steps (not generic AI filler).
+4. **FAQ only if visible** — `FAQPage` JSON-LD only for Q&A rendered on the page; prefer a dedicated `/faq` when the list is long (§7.5).
+5. **Comparison tables** where buyers compare options (B2B) — keep claims truthful.
+6. Prefer real routes over `/#anchors` for trust content that should be cited.
+
+Eligibility for AI answers still depends on quality and third-party signals — this pattern only improves **structure and fetchability**.
+
 ---
 
 ## 3. Mandatory discovery questions for every project
@@ -78,8 +109,10 @@ Before making changes, the AI agent must ask and wait for answers.
 - Is GA4 installed? If yes, what is the Measurement ID and installation method?
 - Is Google Tag Manager used?
 - Is Google Search Console verified?
-- Is Bing Webmaster Tools verified?
+- Is **Bing Webmaster Tools** verified? (Recommended for AI-adjacent discovery; pairs with IndexNow.)
+- Is IndexNow planned or already live on this host?
 - Are there other analytics tools in use (PostHog, Mixpanel, Plausible, Matomo)?
+- Is AI referral measurement (e.g. GA4 `ai_referral_landing`) installed or intentionally skipped?
 
 ### 3.3 SEO and content systems
 - Is there an existing robots.txt?
@@ -107,7 +140,7 @@ The agent must summarize the answers in 5-10 bullets before implementation.
 
 ## 4. Implementation order: do this first
 
-This order is mandatory. Do not start with Dualmark or llms.txt blindly.
+This order is mandatory. Do not start with markdown twins or llms.txt blindly.
 
 ### Phase 1 — Baseline SEO and eligibility
 1. Verify Google Search Console exists; if not, ask the user to set it up.
@@ -143,12 +176,16 @@ If these fail, stop and fix them before advanced AEO work.
 ### Phase 3 — Broader AEO implementation
 13. Create/update llms.txt.
 14. Create/update robots.txt AI crawler policy.
-15. Consider adding markdown twins for top-priority pages.
-16. If the stack supports it and the user approves, implement Dualmark or equivalent routing.
-17. Optionally add sitemap.md for machine-readable discovery across non-Google systems.
+15. Consider adding markdown twins for top-priority **public content** pages.
+16. If the stack supports it and the **user approves**, implement stack-native twin
+    routes (and optional edge content negotiation — human gate; see §8.4.4).
+17. Optionally add `llms-full.txt` and/or sitemap.md for machine-readable discovery.
 18. Add answer-first intros and FAQ sections to priority pages.
 19. Set up GA4 AI referral measurement instructions.
 20. Document everything in .ai/docs/AEO-CHANGES.md.
+21. If the project has a **Glint blog**, keep blog AEO on Glint (`docs/AEO.md` /
+    `docs/UPGRADE.md`); use OpenStart for the website/app and content handoff so
+    product and posts stay aligned.
 
 ---
 
@@ -303,23 +340,30 @@ For a project that has decided it **wants** AI visibility on its public pages, t
 agent may propose an explicit allow-list rather than relying on defaults. The
 pattern is **allow-public / deny-private**: every crawler (including named AI bots)
 gets the same private exclusions (`/admin`, `/dashboard`, auth/API routes) and is
-welcomed everywhere else.
+welcomed elsewhere.
 
-Decision guide the agent must walk through with the owner before allowing:
-- **Named AI crawlers** (GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, CCBot,
-  Applebot-Extended, …) — allow only if the owner accepts AI training/answer use.
-- **Google-Extended** — allow = content may feed Google's generative AI; block =
-  opt out of generative-AI use. **Neither choice affects normal Googlebot crawling
-  or Search ranking** (separate user-agent). Decide deliberately, never by default.
+**Three owner postures** (align with Glint `aiCrawlers` language):
 
-See `.ai/examples/nextjs-robots.ts` for a Next.js App Router `robots.ts`
-reference (private-path list, AI crawler array, sitemap/host wiring).
+| Posture | Allow | Block |
+|---------|-------|--------|
+| **all** | Named AI bots + `*` | Private paths only |
+| **retrieval-first** (recommended when owner wants **answers/citations** but not training scrapers) | User-action / search bots: ChatGPT-User, OAI-SearchBot, Perplexity-User, Claude-User, Claude-SearchBot, … | Training-oriented: GPTBot, CCBot, Google-Extended, Applebot-Extended, Bytespider, … |
+| **none** | Classic search (Googlebot/Bingbot via `*`) | Named AI bots |
+
+Decision guide before allowing:
+- **Retrieval / user-action bots** — usually allow if the owner wants AI answers and citations.
+- **Training crawlers** — allow only if the owner accepts training use.
+- **Google-Extended** — generative AI opt-out; **does not** affect normal Googlebot Search. Decide deliberately.
+
+See `.ai/examples/nextjs-robots.ts` for App Router `robots.ts` (includes retrieval vs training split comments).
 
 ### 8.2 sitemap standard
 The agent must:
 - ensure sitemap.xml lists canonical URLs,
 - exclude junk pages,
-- ensure freshness/update logic,
+- ensure freshness/update logic — prefer `<lastmod>` from content
+  `updatedAt ?? publishedAt` (or last meaningful deploy) on priority URLs,
+- include markdown twin URLs at **lower priority** when twins exist (§8.4.1),
 - consider image/video sitemap support when relevant.
 
 ### 8.3 schema standard
@@ -327,20 +371,37 @@ The agent must:
 - add only schema that matches visible content,
 - use Organization / LocalBusiness where applicable,
 - add Service / Product / SoftwareApplication / Article / FAQPage / HowTo as appropriate,
+- set Organization `sameAs` (social/profile URLs) when real profiles exist,
 - avoid fake reviews, fake FAQs, fake prices, or invisible content.
 
+**Entity clarity:** strengthen Organization, Product/SoftwareApplication, Person
+(authors), and AboutPage. Do **not** invent proprietary “entity map” files unless
+the project already uses them — schema + sameAs + real pages are enough.
+
 For Next.js App Router, see `.ai/examples/nextjs-seo.ts` for reference
-`serializeJsonLd` + Organization / WebSite / BreadcrumbList / LocalBusiness
-builders.
+`serializeJsonLd` + Organization / WebSite / BreadcrumbList / LocalBusiness /
+Person / BlogPosting builders.
 
-### 8.4 markdown / Dualmark standard
-The agent must treat Dualmark as optional infrastructure for broader AEO, not a universal requirement.
-Only recommend it when:
-- the stack can support it cleanly,
-- priority pages are content-heavy enough to justify markdown twins,
-- the user wants broader AI assistant optimization beyond Google.
+### 8.4 Markdown twins (optional infrastructure)
 
-If not, the agent should implement the rest of the framework without forcing markdown routing.
+Markdown twins are optional broader-AEO infrastructure — **not** a Google requirement
+and **not** tied to any third-party product. Prefer **stack-native** twin routes
+(Next.js App Router, Astro endpoints, Glint `/raw/…`, etc.).
+
+Only recommend twins when:
+- the stack can support them cleanly,
+- priority pages are content-heavy enough (landing pages, docs, marketing long-form),
+- the owner wants broader AI assistant fetchability beyond Google.
+
+**OpenStart vs Glint:**
+- **Website / landing (OpenStart project):** implement twins via this standard + examples.
+- **Blog (Glint):** use Glint’s built-in twins and headers (`markdownTwinResponse`);
+  follow Glint `docs/AEO.md` / `docs/UPGRADE.md` — do not re-implement the blog
+  engine in the app repo.
+- **Paired app + blog:** both share this eligibility bar; content handoff keeps
+  product releases and posts in sync.
+
+If twins are not justified, implement the rest of the framework without forcing them.
 
 #### 8.4.1 Markdown twin discovery (when twins exist)
 A markdown twin only helps if crawlers can find it. When twins are implemented, the
@@ -401,22 +462,84 @@ Keep the twin URL shape consistent with whatever the alternate link, sitemap, an
 llms.txt advertise.
 
 #### 8.4.3 Twin canonical/indexing policy and headers
-To prevent twin markdown files from competing with primary HTML canonical URLs in search engines, projects must enforce a clear duplicate control policy:
-- **Minimum:** The twin page response must return a `Link: <html-canonical>; rel="canonical"` HTTP header (or equivalent HTML meta tag) pointing back to the HTML canonical page. This ensures search engines do not index the twin page as the primary target.
-- **Optional project choice:** Set a `noindex` policy on twins if twin routes are strictly intended for LLM engine retrieval and should be entirely hidden from standard search listings.
-- Maintain identical twin URL shapes across alternate links, sitemap entries, `llms.txt`, and IndexNow submissions.
+To prevent twin markdown from competing with primary HTML in search engines:
+- **Minimum:** twin response returns `Link: <html-canonical>; rel="canonical"`
+  (HTTP header or equivalent) pointing at the HTML page.
+- **Recommended:** `X-Robots-Tag` containing `noindex` when twins are for AI
+  retrieval only (not a second indexable page).
+- Maintain identical twin URL shapes across alternate links, sitemap, `llms.txt`,
+  and IndexNow submissions.
 
-##### Twin headers + AI fetch lag (evidence-labelled)
-Based on field experience, here are the recommendations for twin delivery:
+##### Preferred twin response headers (align with Glint)
+
+| Header | Preferred value |
+|--------|-----------------|
+| `Content-Type` | `text/markdown; charset=utf-8` |
+| `Content-Disposition` | `inline` |
+| `Link` | `<{htmlCanonical}>; rel="canonical"` |
+| `X-Robots-Tag` | includes `noindex` (project policy may add `follow`) |
+| `X-Markdown-Tokens` | integer estimate, e.g. `ceil(utf8Bytes / 4)` |
+| `Vary` | includes `Accept` (add `User-Agent` if UA negotiation is used) |
+| `X-AEO-Version` | e.g. `1.0` |
+| `X-Content-Type-Options` | `nosniff` |
+
+`Content-Type: text/plain` remains a **compatibility option** only (some clients
+download unknown MIME types less often). Keep HTML alternate
+`type="text/markdown"` either way. See `.ai/examples/nextjs-markdown-twin.ts`.
+
+##### Static hosts and AI fetch lag (evidence-labelled)
 
 | Practice | Status in framework |
 |----------|---------------------|
-| All public twins in sitemap | **Required** when twins exist (at lower priority, e.g. 0.5) |
-| UTF-8 + `Content-Disposition: inline` | **Recommended** |
-| `Content-Type: text/plain` for twin body | **Compatibility experiment** — optional default; not an absolute requirement; keep HTML alternate `type="text/markdown"` |
-| IndexNow HTML+twin post-deploy | **Recommended** for Bing-backed discovery speed |
+| All public twins in sitemap (lower priority) | **Required** when twins exist |
+| Preferred header set above | **Recommended** |
+| Host `_headers` / `vercel.json` / Nginx for twin MIME (prerender may drop route headers) | **Recommended** on static hosts |
+| IndexNow HTML+twin post-deploy | **Recommended** for Bing-family discovery speed |
 | Expect assistant fetch lag | **Document** — not a deploy-day pass/fail |
-| “IndexNow causes ChatGPT/training” | **Forbidden claim** — IndexNow only confirms notification receipt |
+| “IndexNow causes ChatGPT/training” | **Forbidden claim** — receipt only |
+
+#### 8.4.4 Optional edge content negotiation (human-gated)
+
+Same-URL negotiation (`Accept: text/markdown` **or** `text/plain` → twin/clean
+text; optional AI bot UA; `406` when neither HTML nor markdown is acceptable)
+requires edge/middleware. It is **not** required for strong SEO/AEO eligibility.
+
+**Prefer platform-native first (still human-approved):**
+
+1. **Cloudflare Markdown for Agents** — Accept → markdown at the edge ([docs](https://developers.cloudflare.com/fundamentals/reference/markdown-for-agents/)).
+2. Host-specific Transform Rules / middleware when native product is unavailable.
+3. Custom Worker only when you need origin twin files + custom headers (e.g. paired Glint `/raw` paths).
+
+- Agents **must not** deploy Workers, middleware, or CDN routes without
+  **explicit human approval**.
+- If approved: honor explicit `Accept: text/html` over bot UA; treat `*/*` as
+  wildcard (not “wants HTML”); set `Vary` correctly; loop-safe origin fetches.
+- Document platform choice in `AEO-CHANGES.md`.
+
+#### 8.4.5 `llms.txt` and optional `llms-full.txt`
+
+- **`llms.txt`:** recommended for public marketing/docs sites; intentionally skip
+  for private apps or when there is no stable public URL set.
+- **`llms-full.txt` (optional):** full markdown bodies of priority public pages
+  for one-fetch AI eligibility. Apply a size guard (e.g. ~500KB total or top N
+  newest pages). Link from `llms.txt`. Never include gated/member content.
+- Eligibility only — not a citation guarantee.
+
+#### 8.4.6 Article / long-form page metadata
+
+For post-like or article landing pages (not every SPA route):
+- Prefer Open Graph article protocol when dates/authors exist
+  (`article:published_time`, `modified_time`, `author`, `tag`, `section`).
+- Prefer `BlogPosting` / `Article` JSON-LD only when it matches **visible** content.
+- Blog *collections* on Glint use Glint’s post templates; marketing pages use this
+  section + `.ai/examples/nextjs-seo.ts`.
+
+#### 8.4.7 Google Web Search Indexing API
+
+Do **not** recommend the Google Web Search Indexing API for general website or
+**BlogPosting** URLs. Google documents it for **JobPosting** / **BroadcastEvent**
+only. For Google discovery use: Search Console sitemap + URL Inspection + quality
+content. Use IndexNow for Bing/Yandex/Naver-style notify (§8.5).
 
 ---
 
@@ -574,11 +697,13 @@ Implement the approved plan using `.ai/framework/aeo/AEO-FRAMEWORK.md`.
 Rules:
 - keep changes minimal and framework-native
 - show diffs/snippets for major files before finalizing
-- do not force Dualmark unless justified
+- do not force markdown twins or edge negotiation unless justified and approved
+- use preferred twin headers (§8.4.3); stack-native routes only
 - keep schema truthful
 - on filtered listing pages, drive H1, answer-first intro, and metadata from one source of truth (§7.1)
 - if you add markdown twins, wire all three discovery surfaces (HTML alternate link, sitemap.xml at lower priority, llms.txt) per §8.4.1; alternate href must match the actual twin route shape
 - on Next.js App Router, never suffix /md after a catch-all — use /md/directory/[[...segments]] for directory twins (§8.4.2)
+- if this is a Glint blog, follow Glint upgrade docs instead of re-implementing twins
 - document every important change in .ai/docs/AEO-CHANGES.md
 After implementation, give me a verification checklist.
 ```
@@ -623,11 +748,15 @@ Before calling a project complete, the agent must confirm:
 
 ### Broader AEO
 - [ ] llms.txt created or intentionally skipped.
-- [ ] robots.txt AI crawler policy reviewed.
+- [ ] llms-full.txt considered (optional) or intentionally skipped — §8.4.5.
+- [ ] robots.txt AI crawler policy reviewed (owner decision).
 - [ ] markdown twins created or intentionally skipped.
 - [ ] twin discovery wired where twins exist (HTML `alternates.types` link + sitemap.xml at lower priority + llms.txt) — see §8.4.1.
-- [ ] twin duplicate policy set when twins exist (canonical Link to HTML and/or intentional noindex) — see §8.4.3.
-- [ ] Dualmark considered and justified if used.
+- [ ] twin preferred headers + duplicate policy (canonical Link, noindex policy) — §8.4.3; static-host headers if needed.
+- [ ] edge content negotiation approved by human **or** intentionally skipped — §8.4.4.
+- [ ] Google Indexing API **not** used for BlogPosting/general pages — §8.4.7.
+- [ ] sitemap lastmod considered on priority URLs — §8.2.
+- [ ] If Glint blog: blog AEO via Glint docs; site/app via OpenStart.
 - [ ] IndexNow integrated or intentionally skipped — see §8.5:
   - [ ] valid key + live key file; keyLocation matches submitted URL prefixes (root or path-scoped).
   - [ ] submit runs only after deploy completion signal for this revision.

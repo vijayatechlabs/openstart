@@ -2,6 +2,36 @@
 
 Dated record of features, changes, and fixes. Newest first.
 
+## [1.5.0] — 2026-07-23
+
+### Added
+- AEO P0/P1 visibility: paired OpenStart+Glint checklist §2.3; money-page pattern §2.4;
+  retrieval-first robots posture §8.1.1; Bing WT + IndexNow in discovery; platform-native
+  markdown (CF Markdown for Agents) §8.4.4; entity sameAs note §8.3 — 2026-07-23
+- `framework/aeo/llms-txt.TEMPLATE.md` short tour-guide template — 2026-07-23
+- Pre-draft question/gap map prompt in `AEO-PROMPTS.md` — 2026-07-23
+- Plan `.ai/docs/plans/aeo-p0-visibility.md` executed — 2026-07-23
+
+### Changed
+- `nextjs-robots.ts`: retrieval vs training bot split + posture switch — 2026-07-23
+- Checklist / skill: paired brand, money pages, Bing, AI referral skip option — 2026-07-23
+
+## [1.4.0] — 2026-07-23
+
+### Added
+- AEO §8.4 uplift: preferred markdown twin headers (`text/markdown` + AEO set),
+  static-host header note, optional `llms-full.txt`, article metadata, edge
+  negotiation human-gate, Google Indexing API non-use for BlogPosting — 2026-07-23
+- OpenStart ↔ Glint pairing in README, AGENT-GUIDE, skill, checklist: sites vs
+  blogs, shared SEO/AI eligibility goal, content handoff stays the sync path — 2026-07-23
+- `.ai/examples/nextjs-markdown-twin.ts`: twin headers + Response + metadata helper — 2026-07-23
+- `nextjs-seo.ts`: `person`, `blogPosting`, `articleOpenGraph` helpers — 2026-07-23
+- `.ai/docs/plans/aeo-uplift.md`: plan for this release — 2026-07-23
+
+### Changed
+- Retire Dualmark-as-default language; stack-native twins + optional edge only — 2026-07-23
+- `AEO-CHECKLIST`, `AEO-AGENTS`, `AEO-PROMPTS`, `aeo-framework` skill aligned with §8.4 — 2026-07-23
+
 ## [1.3.0] — 2026-07-17
 ### Added
 - AEO §8.5: IndexNow standard (deploy gate, keyLocation root/scoped, git/content delta primary, batch ≤10k, 200/202/429, non-claims) — 2026-07-17

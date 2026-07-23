@@ -31,8 +31,10 @@ Using `.ai/framework/aeo/AEO-FRAMEWORK.md`, implement the approved plan.
 Rules:
 - keep changes minimal and framework-native
 - show diffs/snippets before finalizing major files
-- do not force Dualmark unless justified
-- keep schema truthful
+- OpenStart = site/landing/app; Glint = blog — do not re-implement Glint twins in app repos
+- do not force markdown twins or edge negotiation unless justified; edge needs human approval
+- preferred twin headers §8.4.3 (`text/markdown` + AEO set); stack-native routes only
+- keep schema truthful; no Google Indexing API for BlogPosting (§8.4.7)
 - on filtered listing pages (query-param or path-segment), drive H1, answer-first
   intro, and metadata from one source of truth (§7.1)
 - if you add markdown twins, wire all three discovery surfaces (HTML alternate
@@ -44,6 +46,14 @@ Rules:
 - for IndexNow, enforce post-deployment triggers with durable cursors, support root vs path-scoped keys, use delta-based URL selection (HTML + twin), and handle 200/202/429 status codes. Avoid overclaiming ranking or LLM training ingestion.
 - document work in `.ai/docs/AEO-CHANGES.md`
 After changes, provide a verification checklist.
+
+## 3b. Pre-draft research prompt (question / gap map)
+Using `.ai/framework/aeo/AEO-FRAMEWORK.md` §2.4 and content strategy:
+Before proposing or drafting titles, produce a short **question/gap map**:
+- 3–7 decision-shaped questions buyers ask
+- which sources already dominate AI/search answers (web search OK)
+- one evidence gap this brand can own (original data, product truth, how-to)
+Do not draft full posts. No citation guarantees — editorial infrastructure only.
 
 ## 4. Content prompt
 Using `.ai/framework/aeo/AEO-FRAMEWORK.md`, review the top pages.
