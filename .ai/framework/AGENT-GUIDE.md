@@ -70,6 +70,13 @@ Apply these to all code you write, regardless of language or framework.
 - Use parameterized queries / ORMs; escape output by context.
 - Keep dependencies current; avoid abandoned packages; pin versions.
 - If you write insecure code, fix it immediately — don't ship it and note it.
+- **Coding-agent containment (2026).** Claude Code, Codex, OpenCode, Copilot CLI
+  and similar harnesses run inside a disposable sandbox (Docker `sbx` / microVM),
+  not YOLO on the operator host or a production Hermes/gateway box. The agent may
+  install packages and run Docker *inside* the sandbox; the host filesystem stays
+  untouched. MCP tools are allowlisted. **Human approval is still required**
+  before prod deploy or publish — a sandbox is not an auto-merge. See
+  [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/).
 
 ### 3.2 Mobile-first & modern web standards
 - Design and build mobile-first; scale up to larger breakpoints.
