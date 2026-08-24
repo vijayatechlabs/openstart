@@ -70,6 +70,18 @@ Apply these to all code you write, regardless of language or framework.
 - Use parameterized queries / ORMs; escape output by context.
 - Keep dependencies current; avoid abandoned packages; pin versions.
 - If you write insecure code, fix it immediately — don't ship it and note it.
+- **Write-tools and MCP identity (2026-08).** Sensitive writes (publish, deploy,
+  send customer email, post an invoice, chase a payment, move credentials)
+  return `needs_approval` plus a **browser** link. Approvals are args-bound,
+  single-use, human-authed, and tell the model **do not retry automatically**.
+  An MCP agent-identity token, ID-JAG grant, workload-identity federation,
+  Tasks (SEP-2663), or `subscriptions/listen` is **not** an approval. Stay on
+  MCP 2026-07-28 + MRTR for customer-facing writes. Do not adopt those
+  primitives on any path that can chase, invoice, or publish. Isolated VMs
+  and HTTP-native MCP isolate *transport*; they are not a control plane.
+  Coding agents (Claude Code, Codex, OpenCode, Copilot CLI) run inside a
+  disposable sandbox (Docker `sbx` / microVM), not YOLO on the operator host
+  or a production gateway. A sandbox is not an auto-merge.
 
 ### 3.2 Mobile-first & modern web standards
 - Design and build mobile-first; scale up to larger breakpoints.
@@ -284,6 +296,12 @@ question beats an unrecoverable mistake.
 - Sending anything to a human or third party (email, Slack, webhook, API write).
 - Authorization is scoped to what was asked — **approval once is not approval
   forever.** Re-confirm for each new consequential action.
+- **MCP / cloud-agent identity is not a present human.** Protocol work on
+  agent identity, ID-JAG, Tasks, and `subscriptions/listen` does not replace
+  the browser step-up. Human-presence attestation is still only *under
+  discussion* on the MCP roadmap — do not treat a headless caller as the
+  user. Cursor-style PR auto-subscribe, `/goal`, and `/loop` stay off any
+  write that can publish, deploy, or contact a customer.
 
 **Never do these without explicit, specific confirmation.**
 - Destructive git: force-push, `reset --hard` on shared branches, deleting
