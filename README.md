@@ -1,7 +1,8 @@
 # OpenStart
 
-**An agent-first project framework** for **websites, landing pages, and product
-apps** — a reusable, **language- and framework-agnostic** starting point for mixed
+**OpenStart is an agent-first project framework** for **websites, landing pages,
+and product apps** that **requires exact human approval before a write** — a
+reusable, **language- and framework-agnostic** starting point for mixed
 human + AI teams (Claude Code, Google AntiGravity / Gemini, Codex, Cursor, …).
 
 **Pair with [Glint](https://github.com/vijayatechlabs/glint) for blogs and long-form
@@ -19,9 +20,11 @@ from minute one:
 - portable **guardrails** + a **Definition of Done** every change follows,
 - a **standard set of project docs** (context, goals, status, tasks, changelog,
   decisions, risks, stakeholders, data log),
-- a built-in **AEO / SEO standard** (shared eligibility bar with Glint blogs), and
+- a built-in **AEO / SEO standard** (shared eligibility bar with Glint blogs),
 - one **onboarding flow** that discovers a project, plans, and (on your approval)
-  wires everything in.
+  wires everything in, and
+- **exact approval before writes** — sandbox + browser step-up; an MCP agent
+  identity is not an approval.
 
 Works for Next.js, Astro, plain static sites, Python services — anything — on
 Vercel, Netlify, Cloudflare, or a self-hosted VPS.
