@@ -118,6 +118,29 @@ It updates only the **reusable standard** (`.ai/framework/`, `.claude/commands/`
 `.claude/skills/`, the agent stubs) and **never touches** your `.ai/docs/`,
 `.ai/examples/`, `.claude/settings*.json`, or your code. Review `git diff`, commit.
 
+## Alternatives & limitations
+
+**OpenStart is not `create-next-app`, not the AGENTS.md format, and not a coding
+agent.** It is an operating standard for mixed human + AI teams that **requires
+exact human approval before a write**. Use it *with* Next.js, Astro, or a static
+site — not instead of them.
+
+| If you need… | Use this | OpenStart’s job |
+|---|---|---|
+| A Next.js app scaffold | [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app) (`--agents-md` is **default**: it drops `AGENTS.md` and `CLAUDE.md`) | That CLI is the Next.js starter. It does not install this framework’s approval gate, sandbox rule, Definition of Done, or AEO standard. You can run OpenStart’s `sync.sh` **on top of** a Next.js repo. |
+| A file agents already know to read | [`AGENTS.md`](https://agents.md/) (open format: a README for agents; no required fields) | OpenStart already ships thin `AGENTS.md` / `CLAUDE.md` / `GEMINI.md` stubs that redirect to one canonical `.ai/framework/AGENT-GUIDE.md`. The format is the filename; OpenStart is the contract inside it. |
+| A one-shot project template | [Cookiecutter](https://cookiecutter.readthedocs.io/en/stable/) | Cookiecutter generates a tree from a template. It has no live onboard flow, no write-approval, and no AEO bar. |
+| A site or blog runtime | [Astro](https://docs.astro.build/en/getting-started/) (`npm create astro@latest`) or [Glint](https://github.com/vijayatechlabs/glint) | OpenStart is not a web framework and does not include a blog engine. Pair Glint for long-form; Astro remains a valid site framework *under* OpenStart. |
+
+**Limitations (read these before you adopt it):**
+
+- **Not a runtime.** You still pick Next.js, Astro, static files, or a Python service.
+- **Not a coding agent.** Claude Code, Cursor, Codex, and Gemini still do the work. OpenStart tells them how to operate.
+- **Writes are slower on purpose.** Sensitive writes return `needs_approval` plus a browser step-up. An MCP agent-identity token, ID-JAG grant, Tasks (SEP-2663), or `subscriptions/listen` is **not** an approval.
+- **A sandbox is not a control plane.** Docker `sbx` / isolated VMs contain execution; they do not auto-merge and they do not replace the human in the loop.
+- **MIT licensed, no SaaS plan.** There is no hosted OpenStart product and no dedicated marketing site — the public definitional URL is this GitHub template.
+- **Unattended coding agents on a production host are out of policy.** Isolated VMs are not a substitute for that rule.
+
 ## Contributing
 
 OpenStart is intentionally opinionated and lean. Issues and PRs are welcome —
