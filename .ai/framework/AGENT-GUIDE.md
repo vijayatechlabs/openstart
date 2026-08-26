@@ -81,7 +81,13 @@ Apply these to all code you write, regardless of language or framework.
   and HTTP-native MCP isolate *transport*; they are not a control plane.
   Coding agents (Claude Code, Codex, OpenCode, Copilot CLI) run inside a
   disposable sandbox (Docker `sbx` / microVM), not YOLO on the operator host
-  or a production gateway. A sandbox is not an auto-merge.
+  or a production gateway. A sandbox is not an auto-merge. Claude Code
+  **auto mode** (built-in starting permission mode on Pro, Max, and Team)
+  sends actions to a classifier instead of a person. Sandbox auto-allow runs
+  sandboxed Bash without a prompt. Neither is `needs_approval`. Do not set
+  `permissions.defaultMode` to `auto` or use `bypassPermissions` on chase /
+  invoice / publish / deploy paths. `bypassPermissions` is for isolated
+  containers and VMs only.
 
 ### 3.2 Mobile-first & modern web standards
 - Design and build mobile-first; scale up to larger breakpoints.
@@ -300,8 +306,9 @@ question beats an unrecoverable mistake.
   agent identity, ID-JAG, Tasks, and `subscriptions/listen` does not replace
   the browser step-up. Human-presence attestation is still only *under
   discussion* on the MCP roadmap — do not treat a headless caller as the
-  user. Cursor-style PR auto-subscribe, `/goal`, and `/loop` stay off any
-  write that can publish, deploy, or contact a customer.
+  user. Claude Code auto mode (a classifier) is not a present human either.
+  Cursor-style PR auto-subscribe, `/goal`, and `/loop` stay off any write
+  that can publish, deploy, or contact a customer.
 
 **Never do these without explicit, specific confirmation.**
 - Destructive git: force-push, `reset --hard` on shared branches, deleting

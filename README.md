@@ -24,7 +24,9 @@ from minute one:
 - one **onboarding flow** that discovers a project, plans, and (on your approval)
   wires everything in, and
 - **exact approval before writes** — sandbox + browser step-up; an MCP agent
-  identity is not an approval.
+  identity is not an approval. Claude Code **auto mode** (the built-in starting
+  permission mode on Pro, Max, and Team) and Bash-sandbox auto-allow are **not**
+  that approval: a classifier is not a human in the browser.
 
 Works for Next.js, Astro, plain static sites, Python services — anything — on
 Vercel, Netlify, Cloudflare, or a self-hosted VPS.
