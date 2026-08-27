@@ -81,7 +81,13 @@ Apply these to all code you write, regardless of language or framework.
   and HTTP-native MCP isolate *transport*; they are not a control plane.
   Coding agents (Claude Code, Codex, OpenCode, Copilot CLI) run inside a
   disposable sandbox (Docker `sbx` / microVM), not YOLO on the operator host
-  or a production gateway. A sandbox is not an auto-merge.
+  or a production gateway. A sandbox is not an auto-merge. Isolation is not
+  permission: permission modes decide whether you are prompted; isolation
+  restricts what a command can access once it runs. Auto mode's classifier
+  is a per-action control, not an isolation boundary. The built-in sandboxed
+  Bash tool does not cover MCP servers or hooks — those still run on the
+  host. Do not treat `/sandbox` auto-allow, auto mode, or an isolated VM as
+  `needs_approval` on chase / invoice / publish / deploy.
 
 ### 3.2 Mobile-first & modern web standards
 - Design and build mobile-first; scale up to larger breakpoints.
@@ -300,8 +306,10 @@ question beats an unrecoverable mistake.
   agent identity, ID-JAG, Tasks, and `subscriptions/listen` does not replace
   the browser step-up. Human-presence attestation is still only *under
   discussion* on the MCP roadmap — do not treat a headless caller as the
-  user. Cursor-style PR auto-subscribe, `/goal`, and `/loop` stay off any
-  write that can publish, deploy, or contact a customer.
+  user. Isolation does not replace that step-up: a sandbox is not a present
+  human, and it does not change what is sent to the model. Cursor-style PR
+  auto-subscribe, `/goal`, and `/loop` stay off any write that can publish,
+  deploy, or contact a customer.
 
 **Never do these without explicit, specific confirmation.**
 - Destructive git: force-push, `reset --hard` on shared branches, deleting

@@ -24,7 +24,10 @@ from minute one:
 - one **onboarding flow** that discovers a project, plans, and (on your approval)
   wires everything in, and
 - **exact approval before writes** — sandbox + browser step-up; an MCP agent
-  identity is not an approval.
+  identity is not an approval. Isolation is not that approval: a sandbox or
+  VM only limits what a command can reach after it runs. Claude Code's
+  classifier is not an isolation boundary, and sandboxed Bash does not
+  contain MCP servers or hooks.
 
 Works for Next.js, Astro, plain static sites, Python services — anything — on
 Vercel, Netlify, Cloudflare, or a self-hosted VPS.
