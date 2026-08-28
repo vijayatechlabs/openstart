@@ -24,7 +24,8 @@ from minute one:
 - one **onboarding flow** that discovers a project, plans, and (on your approval)
   wires everything in, and
 - **exact approval before writes** — sandbox + browser step-up; an MCP agent
-  identity is not an approval.
+  identity is not an approval. Cursor Cloud Agents can now start without a
+  connected repo and publish to Vercel; that publish is not this approval.
 
 Works for Next.js, Astro, plain static sites, Python services — anything — on
 Vercel, Netlify, Cloudflare, or a self-hosted VPS.

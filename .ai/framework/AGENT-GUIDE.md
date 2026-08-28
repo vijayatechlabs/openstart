@@ -81,7 +81,11 @@ Apply these to all code you write, regardless of language or framework.
   and HTTP-native MCP isolate *transport*; they are not a control plane.
   Coding agents (Claude Code, Codex, OpenCode, Copilot CLI) run inside a
   disposable sandbox (Docker `sbx` / microVM), not YOLO on the operator host
-  or a production gateway. A sandbox is not an auto-merge.
+  or a production gateway. A sandbox is not an auto-merge. Cursor Cloud
+  Agents can "Start from scratch" with no GitHub repo, save to Origin, and
+  publish a Vercel URL. That publish button is not `needs_approval`. Origin
+  hosting and a cloud-agent live preview are not the browser step-up on
+  chase / invoice / publish / deploy.
 
 ### 3.2 Mobile-first & modern web standards
 - Design and build mobile-first; scale up to larger breakpoints.
