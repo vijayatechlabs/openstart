@@ -81,7 +81,13 @@ Apply these to all code you write, regardless of language or framework.
   and HTTP-native MCP isolate *transport*; they are not a control plane.
   Coding agents (Claude Code, Codex, OpenCode, Copilot CLI) run inside a
   disposable sandbox (Docker `sbx` / microVM), not YOLO on the operator host
-  or a production gateway. A sandbox is not an auto-merge.
+  or a production gateway. A sandbox is not an auto-merge. Claude Code
+  `--restricted` (or `CLAUDE_CODE_RESTRICTED=1`, v2.1.248) removes the
+  built-in tools that run commands or code and `WebFetch` unless named in
+  `--tools`, keeps file tools inside the working directory, refuses
+  `bypassPermissions`, and ignores user, project and local settings files.
+  That working-directory jail is not `needs_approval`. File tools can still
+  write in-tree without a person.
 
 ### 3.2 Mobile-first & modern web standards
 - Design and build mobile-first; scale up to larger breakpoints.
