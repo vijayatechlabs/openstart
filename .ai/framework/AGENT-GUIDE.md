@@ -81,7 +81,16 @@ Apply these to all code you write, regardless of language or framework.
   and HTTP-native MCP isolate *transport*; they are not a control plane.
   Coding agents (Claude Code, Codex, OpenCode, Copilot CLI) run inside a
   disposable sandbox (Docker `sbx` / microVM), not YOLO on the operator host
-  or a production gateway. A sandbox is not an auto-merge.
+  or a production gateway. A sandbox is not an auto-merge. Claude Code
+  2.1.257 auto mode adds a Containment Escape rule (cloud metadata-credential
+  fetches, egress evasion, and cross-tenant reach are no longer auto-approved
+  unless the environment marks them expected) and a one-time prompt before
+  the first file read outside the working directories. Cowork / claude.ai
+  cloud sessions now ask before reading another user's artifact even in auto
+  mode. Project `.claude/settings.json` / `.claude/settings.local.json`
+  `defaultMode: "bypassPermissions"` is ignored (session starts Manual);
+  `"auto"` in those files is ignored too. Classifier denials, a one-time
+  read prompt, and ignoring project-local bypass are not `needs_approval`.
 
 ### 3.2 Mobile-first & modern web standards
 - Design and build mobile-first; scale up to larger breakpoints.
