@@ -81,7 +81,12 @@ Apply these to all code you write, regardless of language or framework.
   and HTTP-native MCP isolate *transport*; they are not a control plane.
   Coding agents (Claude Code, Codex, OpenCode, Copilot CLI) run inside a
   disposable sandbox (Docker `sbx` / microVM), not YOLO on the operator host
-  or a production gateway. A sandbox is not an auto-merge.
+  or a production gateway. A sandbox is not an auto-merge. Claude Code
+  2.1.259 `--permission-prompts none` auto-denies anything that would prompt
+  on unattended headless hosts while the active permission mode (including
+  auto mode) keeps deciding. That deny-by-default is not `needs_approval`.
+  Org-pushed `managedMcpServers` (HTTP/SSE only; command entries are skipped)
+  is not an approval either.
 
 ### 3.2 Mobile-first & modern web standards
 - Design and build mobile-first; scale up to larger breakpoints.
