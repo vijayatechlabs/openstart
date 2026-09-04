@@ -24,7 +24,11 @@ from minute one:
 - one **onboarding flow** that discovers a project, plans, and (on your approval)
   wires everything in, and
 - **exact approval before writes** — sandbox + browser step-up; an MCP agent
-  identity is not an approval.
+  identity is not an approval. Claude Code 2.1.260 runs `!` bash-mode
+  commands outside the sandbox even when strict sandbox mode
+  (`sandbox.allowUnsandboxedCommands: false`) is on — that is not that
+  approval. A managed CLAUDE.md (`claudeMd`) skipping the security dialog
+  is not that approval either.
 
 Works for Next.js, Astro, plain static sites, Python services — anything — on
 Vercel, Netlify, Cloudflare, or a self-hosted VPS.

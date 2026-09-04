@@ -81,7 +81,16 @@ Apply these to all code you write, regardless of language or framework.
   and HTTP-native MCP isolate *transport*; they are not a control plane.
   Coding agents (Claude Code, Codex, OpenCode, Copilot CLI) run inside a
   disposable sandbox (Docker `sbx` / microVM), not YOLO on the operator host
-  or a production gateway. A sandbox is not an auto-merge.
+  or a production gateway. A sandbox is not an auto-merge. Claude Code
+  2.1.260 runs commands typed at the `!` bash-mode prompt outside the
+  sandbox even when strict sandbox mode
+  (`sandbox.allowUnsandboxedCommands: false`) is on, like typing into your
+  own terminal. That typed-command escape is not `needs_approval`. A
+  managed CLAUDE.md (`claudeMd`) no longer triggers the security approval
+  dialog (hooks, shell-command, sandbox, and unsafe `env` still do) — that
+  skip is not an approval either. Tighter Edit/Write/Read rule matching and
+  zsh REPORTTIME/REPORTMEMORY/DIRSTACKSIZE prompts are classifier/sandbox
+  fixes, not OpenStart write-approval.
 
 ### 3.2 Mobile-first & modern web standards
 - Design and build mobile-first; scale up to larger breakpoints.
